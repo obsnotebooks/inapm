@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@observablehq/notebook-kit": "^1.5.0"
+  },
+"scripts": {
+    "preview": "notebooks preview --root docs",
+    "build": "notebooks build --root docs --out ../dist -- docs/*.html",
+    "download": "notebooks download https://observablehq.com/@shadoof/inapm2_indrasnet_f > docs/inapm2_indrasnet_f.html"
+  }
+  }
