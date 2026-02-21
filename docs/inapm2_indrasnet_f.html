@@ -109,7 +109,7 @@
     This script works through all the words in the supply text. For each word, if `acrosType is "head"` it puts `1` – for the initial character of the word – into `defAllChars`, the number of characters in the word that will be processed; otherwise it processes all the characters in the word and `defAllChars` will contain the number of characters in the word. For each `defAllChars` of the word, the script checks to see if there exists a corresponding card – named for one of the twenty-six letters of the lowercase alphabet. If there isn’t such a card it creates one and adds an instance of the word to a field on the card; if there *is* such a card it simply adds a word instance to the field. This creates what could be otherwise represented by a JavaScript `Map` of word occurences indexed by letters of the alphabet. If the type of acrostic is head-acrostic, the `a` card, for example, will contain a list of all the word occurrences beginning with `a`; if not, it will contain a list of all word occurrences that contain a letter `a`.
   </script>
   <script id="7" type="module" pinned="">
-    acrosticsMap = (supplyText, acrosticType) => {
+    const acrosticsMap = (supplyText, acrosticType) => {
       let acrostics = new Map(); // create a Map
       let words = supplyText.split(/\s/); // split string literal supply text into words
       for (let i = 0; i < words.length; i++) {
@@ -117,22 +117,6 @@
         // get number of characters to process - only the first one for head-acrostic
         let charactersToProcess = "head" === acrosticType ? 1 : words[i].length;
         for (let j = 0; j < charactersToProcess; j++) {
-          // iterate through the characters
-          let character = words[i][j]; // get the current character
-          if (acrostics.has(character)) {
-            // if we already have an entry for the character
-            acrostics.get(character).push(words[i]); // add the word-occurrence to the array for the character
-          } else {
-            // we don't yet have an entry for the character, so
-            acrostics.set(character, [words[i]]); // create an entry with an array containing the word-occurrence
-          } // end of innner j loop
-        }
-      }
-      return acrostics;
-    }
-  </script>
-  <script id="8" type="application/vnd.observable.javascript">
-    ; j++) {
           // iterate through the characters
           let character = words[i][j]; // get the current character
           if (acrostics.has(character)) {
