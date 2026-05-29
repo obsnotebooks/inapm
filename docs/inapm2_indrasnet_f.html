@@ -1,17 +1,17 @@
 <!doctype html>
 <notebook theme="air">
   <title>Indra’s Net ƒ</title>
-  <script id="0" type="text/markdown">
+  <script id="1" type="text/markdown">
     <span style="float: right; font-variant: small-caps;">Working Draft</span>
     # <cite>Indra’s Net</cite> ƒ
   </script>
-  <script id="1" type="text/markdown">
+  <script id="2" type="text/markdown">
     The contents and significance of the *Indra’s Net* HyperCard stack is discussed in [the corresponding expository chapter](inapm2_indrasnet) for this notebook. Here, we get on with exploring and reengineering selected dynamic pieces within the collection.
   </script>
-  <script id="2" type="text/markdown">
-    The focal hologogramic transformation within *Indra’s Net* was the acrostic, which, at this time, I categorized in a number of ways. The basic form was a “strict abecedarian or [head-]acrostic,” the description of which is given in the corresponding exposition. This hologogram will be outline here along with the “free abecedarian or internal acrostic,” which was known to other practitioners as a mesostic. ‘Under It All’ implemented the strict form and ‘Under It All <small>II</small>’ displayed the free form, then considered by me as an advance in terms of poetics. The supply text for both pieces is the same:
-  </script>
   <script id="3" type="text/markdown">
+    The focal hologogramic transformation within *Indra’s Net* was the acrostic, which, at this time, I categorized in a number of ways. The basic form was a “strict abecedarian or [head-]acrostic,” the description of which is given in the corresponding exposition. This hologogram will be outline here along with the “free abecedarian or internal acrostic,” which was known to other practitioners as a mesostic. ‘Under It All’ implemented the strict form and ‘Under It All <small>II</small>’ displayed the free form, then considered by me as an advance in terms of poetics. The supply text for both pieces is the same: <a id="p1" href="#n1">[1]</a>
+  </script>
+  <script id="4" type="text/markdown">
     >*under it all
     <br>waking
     <br>the simplicity of silence of sleeping form
@@ -38,10 +38,10 @@
     <br>lines shredded by successive sprays of grapeshot
     <br>and what slips like their dreams from its parents gathers form and shows through within and against its tender canonades tattered destroyed returned to the light of day under it all*
   </script>
-  <script id="4" type="text/markdown">
+  <script id="5" type="text/markdown">
     Then we put this element’s `innerText` into a JavaScript `string literal`. In HyperCard, this text retained line breaks that are also respected here, in the JavaScript `literal`:
   </script>
-  <script id="5" type="application/vnd.observable.javascript" pinned="">
+  <script id="6" type="application/vnd.observable.javascript" pinned="">
     supplyTextString = `under it all
     waking
     the simplicity of silence of sleeping form
@@ -63,7 +63,7 @@
     lines shredded by successive sprays of grapeshot
     and what slips like their dreams from its parents gathers form and shows through within and against its tender canonades tattered destroyed returned to the light of day under it all`
   </script>
-  <script id="6" type="text/markdown">
+  <script id="7" type="text/markdown">
     The following script in HyperTalk – `defFrAcros` for ‘define free acrostic’ – in fact allowed both strict and free ‘definitions’ to be created for words being transformed by the acrostic, depending on whether the string `"head"` (rather than anything else) was passed to the `acrosType` parameter of the function.
     ```
     on defFrAcros acrosType
@@ -108,7 +108,7 @@
     ```
     This script works through all the words in the supply text. For each word, if `acrosType is "head"` it puts `1` – for the initial character of the word – into `defAllChars`, the number of characters in the word that will be processed; otherwise it processes all the characters in the word and `defAllChars` will contain the number of characters in the word. For each `defAllChars` of the word, the script checks to see if there exists a corresponding card – named for one of the twenty-six letters of the lowercase alphabet. If there isn’t such a card it creates one and adds an instance of the word to a field on the card; if there *is* such a card it simply adds a word instance to the field. This creates what could be otherwise represented by a JavaScript `Map` of word occurences indexed by letters of the alphabet. If the type of acrostic is head-acrostic, the `a` card, for example, will contain a list of all the word occurrences beginning with `a`; if not, it will contain a list of all word occurrences that contain a letter `a`.
   </script>
-  <script id="7" type="module" pinned="">
+  <script id="8" type="module" pinned="">
     const acrosticsMap = (supplyText, acrosticType) => {
       let acrostics = new Map(); // create a Map
       let words = supplyText.split(/\s/); // split string literal supply text into words
@@ -134,11 +134,13 @@
   <script id="9" type="text/markdown">
     And then, we can evoke it in two forms, one for head-acrostics and one for a free-acrostic or mesostic:
   </script>
-  <script id="10" type="application/vnd.observable.javascript" pinned="">
-    textTransMapHead = () => acrosticsMap(supplyTextString, "head")
+  <script id="10" type="module" pinned="">
+    const textTransMapHead = acrosticsMap(supplyTextString, "head");
+    display(textTransMapHead);
   </script>
-  <script id="11" type="application/vnd.observable.javascript">
-    textTransMapFree = () => acrosticsMap(supplyTextString)
+  <script id="11" type="module" pinned="">
+    const textTransMapFree = acrosticsMap(supplyTextString);
+    display(acrosticsMap(supplyTextString));
   </script>
   <script id="12" type="text/markdown">
     Now we code a ‘player’ that performs the letteral hologogram stuctures implicit in both the head-acrostic and free or mesostic `Maps`. In the HyperCard version, after clicking the relevant item of the stack’s table of contents card, you were sent to a player card that was appropriate for your choice. A text was generated and displayed by a HyperTalk script. In the head-acrostic version, for each letter of the supply text, random words from the same text that begin with the letter are displayed in succession. In the mesostic version, random words that include each letter are displayed.
@@ -192,9 +194,8 @@
   <script id="16" type="text/markdown">
     And code that evokes the player for this display:
   </script>
-  <script id="17" type="application/vnd.observable.javascript" pinned="">
-    playHeadAcrostic = () =>
-      acrosticPlayer(supplyTextString, textTransMapHead, "uiaHead")
+  <script id="17" type="module" pinned="">
+    acrosticPlayer(supplyTextString, textTransMapHead, "uiaHead")
   </script>
   <script id="18" type="text/markdown">
     And here is another display for the **mesostic** version:
@@ -205,9 +206,8 @@
   <script id="20" type="text/markdown">
     With a corresponding invocation:
   </script>
-  <script id="21" type="application/vnd.observable.javascript" pinned="">
-    playMesostic = () =>
-      acrosticPlayer(supplyTextString, textTransMapFree, "uiaMesostic")
+  <script id="21" type="module" pinned="">
+    acrosticPlayer(supplyTextString, textTransMapFree, "uiaMesostic")
   </script>
   <script id="22" type="text/markdown">
     The `playText` HyperTalk script from the original stack is given below for comparison. Details of how the display was animated, however, will be found in the scripts attached to specific HyperCards where specific contents items were actually played. The `transWord` and `showWord` scripts of these cards did the work.
@@ -227,8 +227,9 @@
   <script id="27" type="application/vnd.observable.javascript">
     import { occurrencesMap } from "@shadoof/inapm2_collocations_f"
   </script>
-  <script id="28" type="application/vnd.observable.javascript">
-    uiaOccurrences = () => occurrencesMap(supplyTextString)
+  <script id="28" type="module" pinned="">
+    const uiaOccurrences = occurrencesMap(supplyTextString)
+    display(uiaOccurrences)
   </script>
   <script id="29" type="text/markdown">
     And we’ll need a new player function for this collocationally constrained version, one to which we can pass our `uiaOccurrences`:
@@ -322,17 +323,18 @@
   <script id="31" type="text/markdown">
     Finally, the animation is started by invoking this function on page refresh:
   </script>
-  <script id="32" type="application/vnd.observable.javascript" pinned="">
-    playMesoColloc = () =>
+  <script id="32" type="module" pinned="">
+    const playMesoColloc = () =>
       acroCollocPlayer(
         supplyTextString,
         textTransMapFree,
         uiaOccurrences,
         "uiaMesoColloc"
       )
+    playMesoColloc();
   </script>
   <script id="33" type="text/markdown">
-    [1.](#p1) placeholder note.
+    <a id="n1" href="#p1">1.</a> placeholder note.
   </script>
   <script id="34" type="text/html" pinned="">
     <p><em>This cell is styling CSS for the display elements.</em></p>
