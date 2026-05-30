@@ -5,6 +5,6 @@
 "scripts": {
     "preview": "notebooks preview --root docs",
     "build": "notebooks build --root docs --out ../dist -- docs/*.html",
-    "download": "notebooks download https://observablehq.com/@shadoof/inapm2_indrasnet_f > docs/inapm2_indrasnet_f.html"
+    "download": "notebooks download https://observablehq.com/@shadoof/inapm2_indrasnet > docs/inapm2_indrasnet.html"
   }
   }
