@@ -1,628 +1,1353 @@
-<!doctype html>
-<notebook theme="air">
-  <title>Indra’s Net ƒ</title>
-  <script id="1" type="text/markdown">
-    <span style="float: right; font-variant: small-caps;">Working Draft</span>
-    # <cite>Indra’s Net</cite> ƒ
-  </script>
-  <script id="2" type="text/markdown">
-    The contents and significance of the *Indra’s Net* HyperCard stack is discussed in [the corresponding expository chapter](inapm2_indrasnet) for this notebook. Here, we get on with exploring and reengineering selected dynamic pieces within the collection.
-  </script>
-  <script id="3" type="text/markdown">
-    The focal hologogramic transformation within *Indra’s Net* was the acrostic, which, at this time, I categorized in a number of ways. The basic form was a “strict abecedarian or [head-]acrostic,” the description of which is given in the corresponding exposition. This hologogram will be outline here along with the “free abecedarian or internal acrostic,” which was known to other practitioners as a mesostic. ‘Under It All’ implemented the strict form and ‘Under It All <small>II</small>’ displayed the free form, then considered by me as an advance in terms of poetics. The supply text for both pieces is the same: <a id="p1" href="#n1">[1]</a>
-  </script>
-  <script id="4" type="text/markdown">
-    >*under it all
-    <br>waking
-    <br>the simplicity of silence of sleeping form
-    <br>two points on a sheet of canvas and all the possible lines between them may prove to be a problem far beyond the capacities of the artist to resolve
-    <br>consider the problem of a child who wakes one morning and enters the room of its sleeping parents
-    a summer’s morning so warm that the adults have abandoned all covering except a sheet which trails in sculpted folds over partially concealed limbs
-    <br>they lie on another clean white sheet whose pure brightness the child particularly notices
-    the adults barely sleep but desire to sleep on more soundly
-    <br>the child knows that they are dimly aware of the approaching day notices once more the purity and whiteness of the underlying sheet
-    <br>the silence is complete
-    <br>here are two bodies lying in a tender relationship which the child believes it fully understands
-    the child longs to draw out the lines between the two bodies to express them perfectly draw them out towards itself
-    <br>but there is the infuriating purity and whiteness of the sheet and everything is so quiet
-    the child forgets all about the bodies lines  points on the linen knows nothing of shapes and curves making up the sleeping forms is painfully aware that even if it were able to bring these forms to mind to draw them towards its heart its hands and eyes are still too young and inexperienced to follow the lines of the relations it seeks
-    <br>the child is an artist with an imperative vision committed to its most perfect realization
-    what can the child do
-    <br>it needs some method some way of proceeding some technique
-    <br>child leaps onto bed between parents and pummels them with shrill words tiny fists limbs twist flail make demands hair pulled tangled gentle bruises taunts scratches endless demands
-    <br>somewhere scant suggestions of delicate structure remain
-    <br>as dreams slip away they try to smooth out and refashion ragged crumpled shapes
-    <br>lines so many so delicate once so finely drawn
-    <br>the best of what is left seems the pure white sheet under it all
-    <br>child’s barrage continues
-    <br>lines shredded by successive sprays of grapeshot
-    <br>and what slips like their dreams from its parents gathers form and shows through within and against its tender canonades tattered destroyed returned to the light of day under it all*
-  </script>
-  <script id="5" type="text/markdown">
-    Then we put this element’s `innerText` into a JavaScript `string literal`. In HyperCard, this text retained line breaks that are also respected here, in the JavaScript `literal`:
-  </script>
-  <script id="6" type="application/vnd.observable.javascript" pinned="">
-    supplyTextString = `under it all
-    waking
-    the simplicity of silence of sleeping form
-    two points on a sheet of canvas and all the possible lines between them may prove to be a problem far beyond the capacities of the artist to resolve
-    consider the problem of a child who wakes one morning and enters the room of its sleeping parents a summer’s morning so warm that the adults have abandoned all covering except a sheet which trails in sculpted folds over partially concealed limbs
-    they lie on another clean white sheet whose pure brightness the child particularly notices the adults barely sleep but desire to sleep on more soundly
-    the child knows that they are dimly aware of the approaching day notices once more the purity and whiteness of the underlying sheet
-    the silence is complete
-    here are two bodies lying in a tender relationship which the child believes it fully understands the child longs to draw out the lines between the two bodies to express them perfectly draw them out towards itself
-    but there is the infuriating purity and whiteness of the sheet and everything is so quiet the child forgets all about the bodies lines points on the linen knows nothing of shapes and curves making up the sleeping forms is painfully aware that even if it were able to bring these forms to mind to draw them towards its heart its hands and eyes are still too young and inexperienced to follow the lines of the relations it seeks
-    the child is an artist with an imperative vision committed to its most perfect realization what can the child do
-    it needs some method some way of proceeding some technique
-    child leaps onto bed between parents and pummels them with shrill words tiny fists limbs twist flail make demands hair pulled tangled gentle bruises taunts scratches endless demands
-    somewhere scant suggestions of delicate structure remain
-    as dreams slip away they try to smooth out and refashion ragged crumpled shapes
-    lines so many so delicate once so finely drawn
-    the best of what is left seems the pure white sheet under it all
-    child’s barrage continues
-    lines shredded by successive sprays of grapeshot
-    and what slips like their dreams from its parents gathers form and shows through within and against its tender canonades tattered destroyed returned to the light of day under it all`
-  </script>
-  <script id="7" type="text/markdown">
-    The following script in HyperTalk – `defFrAcros` for ‘define free acrostic’ – in fact allowed both strict and free ‘definitions’ to be created for words being transformed by the acrostic, depending on whether the string `"head"` (rather than anything else) was passed to the `acrosType` parameter of the function.
-    ```
-    on defFrAcros acrosType
-      put item 1 of fld label into textName
-      put 1 into xword
-      put "abcdefghijklmnopqrstuvwxyz" into alpha
-      put word xword of field 1 into testw
-      set numberFormat to "0000"
-      put the number of words in fld text into totWords
-      lock screen
-      repeat with i = 1 to totWords
-        put word i of fld text into testw
-        put i into wordNo
-        if acrosType is "head" then
-          put 1 into defAllChars
-        else
-          put the length of testw into defAllChars
-        end if
-        repeat with c = 1 to defAllChars
-          put char c of testw into testc
-          if alpha contains testc then
-            push card
-            go cd textName & ",def," & testc
-            if the result is not empty then
-              go card "blank,def"
-              doMenu "New Card"
-              put textName & ",def," & testc into fld label
-              set the cantDelete of this cd to false
-            end if
-            -- next condition would not have regard to frequencies
-            -- if testw is not in field defStuff then
-            put testw & " " after field defStuff
-            put wordNo & " " after field defNos
-            -- end if
-            pop card
-          end if
-        end repeat
-        put wordNo & "/" & totWords
-      end repeat
-      unlock screen
-    end defFrAcros
-    ```
-    This script works through all the words in the supply text. For each word, if `acrosType is "head"` it puts `1` – for the initial character of the word – into `defAllChars`, the number of characters in the word that will be processed; otherwise it processes all the characters in the word and `defAllChars` will contain the number of characters in the word. For each `defAllChars` of the word, the script checks to see if there exists a corresponding card – named for one of the twenty-six letters of the lowercase alphabet. If there isn’t such a card it creates one and adds an instance of the word to a field on the card; if there *is* such a card it simply adds a word instance to the field. This creates what could be otherwise represented by a JavaScript `Map` of word occurences indexed by letters of the alphabet. If the type of acrostic is head-acrostic, the `a` card, for example, will contain a list of all the word occurrences beginning with `a`; if not, it will contain a list of all word occurrences that contain a letter `a`.
-  </script>
-  <script id="8" type="module" pinned="">
-    const acrosticsMap = (supplyText, acrosticType) => {
-      let acrostics = new Map(); // create a Map
-      let words = supplyText.split(/\s/); // split string literal supply text into words
-      for (let i = 0; i < words.length; i++) {
-        // iterate through the words
-        // get number of characters to process - only the first one for head-acrostic
-        let charactersToProcess = "head" === acrosticType ? 1 : words[i].length;
-        for (let j = 0; j < charactersToProcess; j++) {
-          // iterate through the characters
-          let character = words[i][j]; // get the current character
-          if (acrostics.has(character)) {
-            // if we already have an entry for the character
-            acrostics.get(character).push(words[i]); // add the word-occurrence to the array for the character
-          } else {
-            // we don't yet have an entry for the character, so
-            acrostics.set(character, [words[i]]); // create an entry with an array containing the word-occurrence
-          } // end of innner j loop
-        }
-      }
-      return acrostics;
-    }
-  </script>
-  <script id="9" type="text/markdown">
-    And then, we can evoke it in two forms, one for head-acrostics and one for a free-acrostic or mesostic:
-  </script>
-  <script id="10" type="module" pinned="">
-    const textTransMapHead = acrosticsMap(supplyTextString, "head");
-    display(textTransMapHead);
-  </script>
-  <script id="11" type="module" pinned="">
-    const textTransMapFree = acrosticsMap(supplyTextString);
-    display(acrosticsMap(supplyTextString));
-  </script>
-  <script id="12" type="text/markdown">
-    Now we code a ‘player’ that performs the letteral hologogram stuctures implicit in both the head-acrostic and free or mesostic `Maps`. In the HyperCard version, after clicking the relevant item of the stack’s table of contents card, you were sent to a player card that was appropriate for your choice. A text was generated and displayed by a HyperTalk script. In the head-acrostic version, for each letter of the supply text, random words from the same text that begin with the letter are displayed in succession. In the mesostic version, random words that include each letter are displayed.
+<!doctype html><html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">/* Copyright 2025 Observable, Inc. */
 
-    First, a player function in Javascript that does the same thing.
-  </script>
-  <script id="13" type="application/vnd.observable.javascript" pinned="">
-    acrosticPlayer = async (supplyText, supplyTextMap, displayId) => {
-      let words = supplyText.split(/\s/); // put the supply text's words into an array
-      let display = document.getElementById(displayId); // this is our display area
-      // get a reference to the element where the word currently generating the acrostic is displayed:
-      let displayMonitor = document.getElementById(displayId + "Mntr");
-      for (let i = 0; i < words.length; i++) {
-        // this loops for the number of words in the supply text
-        // and then allows the function to return (as the original did)
-        let currentWord = words[i];
-        let screenWords = [];
-        let j; // we need j outside the loop, so declare it here
-        for (j = 0; j < currentWord.length; j++) {
-          let character = currentWord[j];
-          // add word sastifying the acrostic rule to the screenWords that will be displayed:
-          if (supplyTextMap.has(character)) {
-            let possibleWords = supplyTextMap.get(character);
-            screenWords.push(possibleWords[randomInteger(possibleWords.length)]);
-          }
-        }
-        fadeInByWord([currentWord], displayMonitor, 800); // fade in the supply text word in lower register
-        fadeInByWord(screenWords, display, 800); // fade in the words of the acrostic, one by one
-        // time is needed to complete this animation
-        await delay(j * 800 + 800);
-        // gracefully fade out the acrostic words
-        display.style.color = "ivory";
-        displayMonitor.style.color = "ivory";
-        // time is needed for the color transition
-        await delay(3000);
-        // clear and reset the text color of the display area
-        display.innerHTML = "";
-        display.style.color = "black";
-        displayMonitor.innerHTML = "";
-        displayMonitor.style.color = "black";
-      }
-      return "The acrostic player has finished playing. Refresh page to restart.";
-    }
-  </script>
-  <script id="14" type="text/markdown">
-    Here is a display area for the **head-acrostic** version:
-  </script>
-  <script id="15" type="application/vnd.observable.javascript">
-    html`<div id="uiaHead" class="display"></div><div id="uiaHeadMntr" class="display monitor"></div>`
-  </script>
-  <script id="16" type="text/markdown">
-    And code that evokes the player for this display:
-  </script>
-  <script id="17" type="module" pinned="">
-    acrosticPlayer(supplyTextString, textTransMapHead, "uiaHead")
-  </script>
-  <script id="18" type="text/markdown">
-    And here is another display for the **mesostic** version:
-  </script>
-  <script id="19" type="application/vnd.observable.javascript">
-    html`<div id="uiaMesostic" class="display"></div><div id="uiaMesosticMntr" class="display monitor"></div>`
-  </script>
-  <script id="20" type="text/markdown">
-    With a corresponding invocation:
-  </script>
-  <script id="21" type="module" pinned="">
-    acrosticPlayer(supplyTextString, textTransMapFree, "uiaMesostic")
-  </script>
-  <script id="22" type="text/markdown">
-    The `playText` HyperTalk script from the original stack is given below for comparison. Details of how the display was animated, however, will be found in the scripts attached to specific HyperCards where specific contents items were actually played. The `transWord` and `showWord` scripts of these cards did the work.
-  </script>
-  <script id="23" type="text/markdown">
-    Lastly, in these notes, we will explore the implementation of what I then called ‘collocational constraints’ as applied to the mesostic form of ‘Under It All <small>II</small>.’ These constraints were implemented as a simple bigram Markov model, and such models will be discussed in more detail in [Collocations ƒ](inapm2_collocations_f). The reengineered implementation is placed here, to allow readers to compared the juxtapose versions: the generated text-to-be-read of the constrained version with that of the earlier unconstrained version (above). Also, in a further development that was introduced by *Moods &amp; Conjuctions*, those characters transformed in the mesostic form are highlighted in bold as the text is generated. The HyperTalk scripts that realized these later features are also quoted for comparison with earlier scripts, and with their JavaScript reengineering.
-  </script>
-  <script id="24" type="text/markdown">
-    So, first, a new display area where we will animate ‘Under It All <small>II</small>’ as a **mesostic with collocational constraints**:
-  </script>
-  <script id="25" type="application/vnd.observable.javascript">
-    html`<div id="uiaMesoColloc" class="display"></div><div id="uiaMesoCollocMntr" class="display monitor"></div>`
-  </script>
-  <script id="26" type="text/markdown">
-    We will need to make a `Map` of word occurrences in the supply text. These are explained in [Collocations ƒ](inapm2_collocations_f) from which we will also `import` the function that constructs such a `Map`, invoking it immediately following the `import`.
-  </script>
-  <script id="27" type="application/vnd.observable.javascript">
-    import { occurrencesMap } from "@shadoof/inapm2_collocations_f"
-  </script>
-  <script id="28" type="module" pinned="">
-    const uiaOccurrences = occurrencesMap(supplyTextString)
-    display(uiaOccurrences)
-  </script>
-  <script id="29" type="text/markdown">
-    And we’ll need a new player function for this collocationally constrained version, one to which we can pass our `uiaOccurrences`:
-  </script>
-  <script id="30" type="application/vnd.observable.javascript" pinned="">
-    acroCollocPlayer = async (
-      supplyText,
-      supplyTextMap,
-      occurrencesMap,
-      displayId
-    ) => {
-      let words = supplyText.split(/\s/); // put the supply texts words into an array
-      let display = document.getElementById(displayId); // this is our display area
-      // get a reference to the element where the word currently generating the acrostic is displayed:
-      let displayMonitor = document.getElementById(displayId + "Mntr");
-      let previousScreenWord = words[words.length - 1]; // initially put last word into previousScreenWord
-      for (let i = 0; i < words.length; i++) {
-        // this loops for the number of words in the supply text
-        // and then allows the function to return (as the original did)
-        let currentWord = words[i];
-        let screenWords = [];
-        let j; // we need j outside the loop, so declare it here
-        for (j = 0; j < currentWord.length; j++) {
-          let character = currentWord[j];
-          // we are going to try and find an acrostic-satisfying collocation
-          let foundColloc = false;
-          // add a word sastifying the acrostic rule to the display
-          if (supplyTextMap.has(character)) {
-            let possibleWords = supplyTextMap.get(character);
-            // if any of these possible words collocates with the previousWord
-            // then pick it, putting true into foundColloc
-            let currentScreenWord;
-            for (currentScreenWord of possibleWords) {
-              let occs;
-              try {
-                occs = occurrencesMap.get(currentScreenWord);
-              } catch (e) {
-                console.log("Word not found in occurrences Map."); // should not happen
-              }
-              // looping through the occurrences of current occ and previous prevOcc
-              for (const occ of occs) {
-                for (const prevOcc of occurrencesMap.get(previousScreenWord)) {
-                  // if the occurrence numbers differ by 1, this is a collocation
-                  if (occ - prevOcc == 1) {
-                    foundColloc = true;
-                    // console.log(
-                    //   "found:",
-                    //   `${previousScreenWord} ${currentScreenWord}`
-                    // ); // DEBUG
-                    break; // from prevOccs
-                  }
-                }
-                if (foundColloc) break; // from occs
-              }
-              if (foundColloc) break; // from posibleWords
-            } // we've looped through possibleWords
-            // if no foundColloc pick a random acrostically qualifying word
-            if (!foundColloc)
-              currentScreenWord =
-                possibleWords[randomInteger(possibleWords.length)];
-            previousScreenWord = currentScreenWord;
-            // embolden the acrostic letter
-            let charOffset = currentScreenWord.indexOf(character);
-            currentScreenWord =
-              currentScreenWord.substring(0, charOffset) +
-              "<b>" +
-              character +
-              "</b>" +
-              currentScreenWord.substring(charOffset + 1);
-            screenWords.push(currentScreenWord);
-          } // end characters loop
-        } // end words loop
-        fadeInByWord([currentWord], displayMonitor, 800);
-        fadeInByWord(screenWords, display, 800); // fade in the screenWords, one by one
-        // time is needed to complete this animation
-        await delay(j * 800 + 800);
-        // gracefully fade out the screen words
-        display.style.color = "ivory";
-        displayMonitor.style.color = "ivory";
-        // time is needed for the color transition
-        await delay(3000);
-        // clear and reset the text color of the display area
-        display.innerHTML = "";
-        display.style.color = "black";
-        displayMonitor.innerHTML = "";
-        displayMonitor.style.color = "black";
-      }
-      return "The acrostic player has finished playing. Refresh page to restart.";
-    }
-  </script>
-  <script id="31" type="text/markdown">
-    Finally, the animation is started by invoking this function on page refresh:
-  </script>
-  <script id="32" type="module" pinned="">
-    const playMesoColloc = () =>
-      acroCollocPlayer(
-        supplyTextString,
-        textTransMapFree,
-        uiaOccurrences,
-        "uiaMesoColloc"
-      )
-    playMesoColloc();
-  </script>
-  <script id="33" type="text/markdown">
-    <a id="n1" href="#p1">1.</a> placeholder note.
-  </script>
-  <script id="34" type="text/html" pinned="">
-    <p><em>This cell is styling CSS for the display elements.</em></p>
-    <style>
-      .display {
-        height: 30vw;
-        width: 45vw;
-        margin-left: 3vw;
-        font-size: 3vw;
-        background-color: ivory;
-        padding: 1vw;
-        overflow: hidden;
-        transition: color 2.5s ease-in-out;
-        -o-transition: color 2.5s ease-in-out;
-        -ms-transition: color 2.5s ease-in-out;
-        -moz-transition: color 2.5s ease-in-out;
-        -webkit-transition: color 2.5s ease-in-out;
-      }
-      .display b {
-        font-weight: 550;
-      }
-      .display.monitor {
-        height: 3vw;
-        font-size: 2.5vw;
-      }
+:root {
+  --serif: "Source Serif 4 Variable", ui-serif, serif;
+  --sans-serif: "Inter Variable", ui-sans-serif, sans-serif;
+  --monospace: "Spline Sans Mono Variable", Menlo, Consolas, monospace;
+  --monospace-font: 14px/1.5 var(--monospace);
+  --max-width: calc(1024px - 4 * 16px); /* max-w-5xl p-4 */
+}
+
+html {
+  font: 17px/1.5 var(--serif);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--theme-background);
+  color: var(--theme-foreground);
+  margin: 16px 0;
+  padding: 16px 24px;
+}
+
+main {
+  margin: auto;
+  max-width: var(--max-width);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--theme-foreground-alt);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  text-wrap: balance;
+}
+
+h2 + p,
+h3 + p,
+h4 + p,
+h2 + table,
+h3 + table,
+h4 + table {
+  margin-top: 0;
+}
+
+.observablehq:first-of-type h1 + h2 {
+  color: var(--theme-foreground);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: normal;
+  margin-bottom: 1rem; /* see h2 ~ p */
+}
+
+a[href] {
+  color: var(--theme-foreground-focus);
+  text-decoration: none;
+}
+
+a[href]:hover,
+a[href]:focus {
+  text-decoration: underline;
+}
+
+pre,
+code,
+tt {
+  font-family: var(--monospace);
+  font-size: 82.35294117%; /* from 17px to 14px */
+}
+
+pre code,
+figcaption code {
+  font-size: inherit;
+}
+
+pre[data-language] {
+  position: relative;
+}
+
+pre[data-language]::before {
+  content: attr(data-language);
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 0;
+  display: block;
+  text-align: right;
+  margin-right: -4px;
+  pointer-events: none;
+  font-size: 12px;
+  line-height: 21px;
+  color: var(--theme-foreground-muted);
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+  font-size: 88.235294117%; /* from 17px to 15px */
+}
+
+h2[id] a[href],
+h3[id] a[href] {
+  color: inherit;
+}
+
+pre {
+  line-height: 1.5;
+}
+
+img {
+  max-width: 100%;
+}
+
+p,
+table,
+figure,
+figcaption,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.katex-display {
+  max-width: 640px;
+}
+
+blockquote,
+ol,
+ul {
+  max-width: 600px;
+}
+
+blockquote {
+  margin: 1rem 1.5rem;
+}
+
+ul,
+ol {
+  padding-left: 28px;
+}
+
+hr {
+  height: 1px;
+  margin: 1rem 0;
+  padding: 1rem 0;
+  border: none;
+  background: no-repeat center/100% 1px
+    linear-gradient(to right, var(--theme-foreground-faintest), var(--theme-foreground-faintest));
+}
+
+pre {
+  background-color: var(--theme-background-alt);
+  border-radius: 4px;
+  margin: 1rem -1rem;
+  min-height: 1.5em;
+  padding: 4px 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: none;
+  box-sizing: border-box;
+}
+
+pre > code:only-child {
+  display: block;
+  width: fit-content;
+}
+
+input:not([type]),
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="range"],
+input[type="search"],
+input[type="tel"],
+input[type="text"],
+input[type="url"] {
+  width: 240px;
+}
+
+input,
+canvas,
+button {
+  vertical-align: middle;
+}
+
+button,
+input,
+textarea {
+  accent-color: var(--theme-foreground-focus);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 13px/1.2 var(--sans-serif);
+}
+
+table pre,
+table code,
+table tt {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+th > pre:only-child,
+td > pre:only-child {
+  margin: 0;
+  padding: 0;
+}
+
+th {
+  color: var(--theme-foreground);
+  text-align: left;
+  vertical-align: bottom;
+}
+
+td {
+  color: var(--theme-foreground-alt);
+  vertical-align: top;
+}
+
+th,
+td {
+  padding: 3px 6.5px 3px 0;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 0;
+}
+
+tr:not(:last-child) {
+  border-bottom: solid 1px var(--theme-foreground-faintest);
+}
+
+thead tr {
+  border-bottom: solid 1px var(--theme-foreground-fainter);
+}
+
+figure,
+table {
+  margin: 1rem 0;
+}
+
+figure img {
+  max-width: 100%;
+}
+
+figure > h2,
+figure > h3 {
+  font-family: var(--sans-serif);
+}
+
+figure > h2 {
+  font-size: 20px;
+}
+
+figure > h3 {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+figcaption {
+  font: small var(--sans-serif);
+  color: var(--theme-foreground-muted);
+}
+
+.observablehq--collapsed,
+.observablehq--expanded.observablehq--inspect a {
+  cursor: pointer;
+}
+
+.observablehq--caret {
+  margin-right: 4px;
+  vertical-align: baseline;
+}
+
+.observablehq--field {
+  text-indent: -1rem;
+  margin-left: 1rem;
+}
+
+.observablehq--inspect {
+  font: var(--monospace-font);
+  overflow-x: auto;
+  white-space: pre;
+  display: block;
+  padding: 2px 0;
+}
+
+.observablehq--inspect.observablehq--import {
+  white-space: normal;
+}
+
+.observablehq--inspect::-webkit-scrollbar {
+  display: none;
+}
+
+.observablehq--error .observablehq--inspect {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.observablehq--string-expand {
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 80%;
+  background: var(--theme-background-alt);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.observablehq--keyword {
+  color: var(--syntax-keyword);
+}
+
+.observablehq--index,
+.observablehq--key {
+  color: var(--syntax-definition);
+}
+
+.observablehq--symbol,
+.observablehq--regexp,
+.observablehq--string {
+  color: var(--syntax-string);
+}
+
+.observablehq--null {
+  color: var(--syntax-keyword);
+}
+
+.observablehq--undefined {
+  color: var(--syntax-variable);
+}
+
+.observablehq--prototype-key {
+  color: var(--syntax-comment);
+}
+
+.observablehq--bigint,
+.observablehq--boolean,
+.observablehq--date,
+.observablehq--forbidden,
+.observablehq--number {
+  color: var(--syntax-literal);
+}
+
+.observablehq--error {
+  color: var(--theme-error);
+}
+
+.observablehq--cell {
+  margin: 17px 0;
+  min-height: 1px; /* prevent margin collapse when empty */
+}
+
+.tok-link {
+  color: var(--syntax-link);
+}
+
+.tok-strong {
+  font-weight: 600;
+}
+
+.tok-emphasis {
+  font-style: italic;
+}
+
+.tok-keyword {
+  color: var(--syntax-keyword);
+}
+
+.tok-atom {
+  color: var(--syntax-atom);
+}
+
+.tok-literal {
+  color: var(--syntax-literal);
+}
+
+.tok-string {
+  color: var(--syntax-string);
+}
+
+.tok-comment {
+  color: var(--syntax-comment);
+}
+
+.tok-invalid {
+  color: var(--syntax-invalid);
+}
+
+.tok-variable {
+  color: var(--syntax-variable);
+}
+
+.tok-definition {
+  color: var(--syntax-definition);
+}
+
+.tok-meta {
+  color: var(--syntax-meta);
+}
+
+.plot-d6a7b5 {
+  --plot-background: var(--theme-background);
+}
+
+p .plot-d6a7b5 {
+  display: inline-block;
+}
+
+.observablehq--cell:empty {
+  min-height: 0;
+}
+
+.observablehq--cell:not(:empty) + pre {
+  margin-top: -11px;
+}
+
+/* inter-cyrillic-ext-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-cyrillic-ext-wght-normal-BOeWTOD4.woff2) format('woff2-variations');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+
+/* inter-cyrillic-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-cyrillic-wght-normal-DqGufNeO.woff2) format('woff2-variations');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+/* inter-greek-ext-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-greek-ext-wght-normal-DlzME5K_.woff2) format('woff2-variations');
+  unicode-range: U+1F00-1FFF;
+}
+
+/* inter-greek-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-greek-wght-normal-CkhJZR-_.woff2) format('woff2-variations');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+
+/* inter-vietnamese-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-vietnamese-wght-normal-CBcvBZtf.woff2) format('woff2-variations');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+
+/* inter-latin-ext-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-latin-ext-wght-normal-DO1Apj_S.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* inter-latin-wght-normal */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-latin-wght-normal-Dx4kXJAl.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* inter-cyrillic-ext-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-cyrillic-ext-wght-italic-B5xAaiFk.woff2) format('woff2-variations');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+
+/* inter-cyrillic-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-cyrillic-wght-italic-DzZdc28x.woff2) format('woff2-variations');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+/* inter-greek-ext-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-greek-ext-wght-italic-DcOpz6Lw.woff2) format('woff2-variations');
+  unicode-range: U+1F00-1FFF;
+}
+
+/* inter-greek-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-greek-wght-italic-CILZdfAp.woff2) format('woff2-variations');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+
+/* inter-vietnamese-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-vietnamese-wght-italic-K3WlGtc8.woff2) format('woff2-variations');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+
+/* inter-latin-ext-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-latin-ext-wght-italic-0pjOp8NU.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* inter-latin-wght-italic */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(./assets/inter-latin-wght-italic-DpCbqKDY.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* source-serif-4-cyrillic-ext-wght-normal */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-cyrillic-ext-wght-normal-cHuGMAiY.woff2) format('woff2-variations');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+
+/* source-serif-4-cyrillic-wght-normal */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-cyrillic-wght-normal-DwHjdM4S.woff2) format('woff2-variations');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+/* source-serif-4-greek-wght-normal */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-greek-wght-normal-ece1310W.woff2) format('woff2-variations');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+
+/* source-serif-4-vietnamese-wght-normal */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-vietnamese-wght-normal-D-yuW59g.woff2) format('woff2-variations');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+
+/* source-serif-4-latin-ext-wght-normal */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-latin-ext-wght-normal-CxNHBx-q.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* source-serif-4-latin-wght-normal */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-latin-wght-normal-D9elroTD.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* source-serif-4-cyrillic-ext-wght-italic */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-cyrillic-ext-wght-italic-BXuSHrjR.woff2) format('woff2-variations');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+
+/* source-serif-4-cyrillic-wght-italic */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-cyrillic-wght-italic-RLIThRd4.woff2) format('woff2-variations');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+/* source-serif-4-greek-wght-italic */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-greek-wght-italic-F2ziEGcb.woff2) format('woff2-variations');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+
+/* source-serif-4-vietnamese-wght-italic */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-vietnamese-wght-italic-C3q834ic.woff2) format('woff2-variations');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+
+/* source-serif-4-latin-ext-wght-italic */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-latin-ext-wght-italic-CpkvI5hy.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* source-serif-4-latin-wght-italic */
+
+@font-face {
+  font-family: 'Source Serif 4 Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url(./assets/source-serif-4-latin-wght-italic-D2yaqPoE.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* spline-sans-mono-latin-ext-wght-normal */
+
+@font-face {
+  font-family: 'Spline Sans Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url(./assets/spline-sans-mono-latin-ext-wght-normal-Dh0aNLWd.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* spline-sans-mono-latin-wght-normal */
+
+@font-face {
+  font-family: 'Spline Sans Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url(./assets/spline-sans-mono-latin-wght-normal-DlaB5ohX.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+/* spline-sans-mono-latin-ext-wght-italic */
+
+@font-face {
+  font-family: 'Spline Sans Mono Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url(./assets/spline-sans-mono-latin-ext-wght-italic-RJy045_w.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* spline-sans-mono-latin-wght-italic */
+
+@font-face {
+  font-family: 'Spline Sans Mono Variable';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url(./assets/spline-sans-mono-latin-wght-italic-DPjO1keU.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
     </style>
-  </script>
-  <script id="35" type="text/markdown">
-    ---
-    ## Selected Raw HyperTalk Scripts
-    The original HyperCard stacks had, typically, five backgrounds:
-    - *PrelimPlus* : Pages or screens readable in a conventional manner by book-like navigation.
-    - *cardSet* : A number of cards shared this background with particular named cards used for one another readable animation.
-    - *texts* : With versions of the supply text formatted for preprocessing.
-    - *defs* : Basically used as a relatively simple data structure. Cards with this background were created and named dynamically during preprocessing, storing information about words in the texts.
-  </script>
-  <script id="36" type="text/markdown">
-    ### from the Stack script of *Indra’s Net*
-    ```
-    on playText
-      global ¬
-      textname,¬
-      wherePlay,¬
-      numOWords,¬
-      newWord, ¬
-      i, ¬
-      showBase, ¬
-      trans, ¬
-      playing, ¬
-      interrupt,veFactor,ve
-      put true into playing
-      set cursor to none
-      hide menuBar
-      put the number of words in fld text of cd textName & ",text" ¬
-      into numOWords
-      put empty into cd fld baseFld of cd wherePlay
-      hide cd fld baseFld of cd wherePlay
-      put empty into cd fld playFld of cd wherePlay
-      go cd wherePlay
-      -- put 0 into i
-      put false into interrupt
-      repeat until i is numOWords
-        add 1 to i
-        if the mouse is down and the shiftKey is down then exit repeat
-        put word i of fld text of cd textName & ",text" ¬
-        into newWord
-        if showBase then
-          put newWord into cd fld baseFld
+  <meta name="generator" content="Observable Notebook Kit v1.9.1"><title>Indra’s Net ƒ</title>  <script type="module" crossorigin src="./assets/inapm2_indrasnet_f-D9y9l5Q4.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/chunk-BQ-_32WO.js">
+  <link rel="modulepreload" crossorigin href="./assets/preload-helper-DXINVdbW.js">
+  <link rel="modulepreload" crossorigin href="./assets/fileAttachment-Do9GDfXx.js">
+  <link rel="modulepreload" crossorigin href="./assets/runtime-C6KpVahm.js">
+</head>
+  <body>
+    <main><div id="cell-1" class="observablehq observablehq--cell"><div><p><span style="float: right; font-variant: small-caps;">Working Draft</span></p>
+<h1><cite>Indra’s Net</cite> ƒ</h1>
+</div></div><div id="cell-2" class="observablehq observablehq--cell"><div><p>The contents and significance of the <em>Indra’s Net</em> HyperCard stack is discussed in <a href="inapm2_indrasnet">the corresponding expository chapter</a> for this notebook. Here, we get on with exploring and reengineering selected dynamic pieces within the collection.</p>
+</div></div><div id="cell-3" class="observablehq observablehq--cell"><div><p>The focal hologogramic transformation within <em>Indra’s Net</em> was the acrostic, which, at this time, I categorized in a number of ways. The basic form was a “strict abecedarian or [head-]acrostic,” the description of which is given in the corresponding exposition. This hologogram will be outline here along with the “free abecedarian or internal acrostic,” which was known to other practitioners as a mesostic. ‘Under It All’ implemented the strict form and ‘Under It All <small>II</small>’ displayed the free form, then considered by me as an advance in terms of poetics. The supply text for both pieces is the same: <a id="p1" href="#n1">[1]</a></p>
+</div></div><div id="cell-4" class="observablehq observablehq--cell"><div><blockquote>
+<p><em>under it all
+<br>waking
+<br>the simplicity of silence of sleeping form
+<br>two points on a sheet of canvas and all the possible lines between them may prove to be a problem far beyond the capacities of the artist to resolve
+<br>consider the problem of a child who wakes one morning and enters the room of its sleeping parents
+a summer’s morning so warm that the adults have abandoned all covering except a sheet which trails in sculpted folds over partially concealed limbs
+<br>they lie on another clean white sheet whose pure brightness the child particularly notices
+the adults barely sleep but desire to sleep on more soundly
+<br>the child knows that they are dimly aware of the approaching day notices once more the purity and whiteness of the underlying sheet
+<br>the silence is complete
+<br>here are two bodies lying in a tender relationship which the child believes it fully understands
+the child longs to draw out the lines between the two bodies to express them perfectly draw them out towards itself
+<br>but there is the infuriating purity and whiteness of the sheet and everything is so quiet
+the child forgets all about the bodies lines  points on the linen knows nothing of shapes and curves making up the sleeping forms is painfully aware that even if it were able to bring these forms to mind to draw them towards its heart its hands and eyes are still too young and inexperienced to follow the lines of the relations it seeks
+<br>the child is an artist with an imperative vision committed to its most perfect realization
+what can the child do
+<br>it needs some method some way of proceeding some technique
+<br>child leaps onto bed between parents and pummels them with shrill words tiny fists limbs twist flail make demands hair pulled tangled gentle bruises taunts scratches endless demands
+<br>somewhere scant suggestions of delicate structure remain
+<br>as dreams slip away they try to smooth out and refashion ragged crumpled shapes
+<br>lines so many so delicate once so finely drawn
+<br>the best of what is left seems the pure white sheet under it all
+<br>child’s barrage continues
+<br>lines shredded by successive sprays of grapeshot
+<br>and what slips like their dreams from its parents gathers form and shows through within and against its tender canonades tattered destroyed returned to the light of day under it all</em></p>
+</blockquote>
+</div></div><div id="cell-5" class="observablehq observablehq--cell"><div><p>Then we put this element’s <code>innerText</code> into a JavaScript <code>string literal</code>. In HyperCard, this text retained line breaks that are also respected here, in the JavaScript <code>literal</code>:</p>
+</div></div><div id="cell-6" class="observablehq observablehq--cell"></div><pre data-language="ojs"><code class="language-ojs">supplyTextString = `under it all
+waking
+the simplicity of silence of sleeping form
+two points on a sheet of canvas and all the possible lines between them may prove to be a problem far beyond the capacities of the artist to resolve
+consider the problem of a child who wakes one morning and enters the room of its sleeping parents a summer’s morning so warm that the adults have abandoned all covering except a sheet which trails in sculpted folds over partially concealed limbs
+they lie on another clean white sheet whose pure brightness the child particularly notices the adults barely sleep but desire to sleep on more soundly
+the child knows that they are dimly aware of the approaching day notices once more the purity and whiteness of the underlying sheet
+the silence is complete
+here are two bodies lying in a tender relationship which the child believes it fully understands the child longs to draw out the lines between the two bodies to express them perfectly draw them out towards itself
+but there is the infuriating purity and whiteness of the sheet and everything is so quiet the child forgets all about the bodies lines points on the linen knows nothing of shapes and curves making up the sleeping forms is painfully aware that even if it were able to bring these forms to mind to draw them towards its heart its hands and eyes are still too young and inexperienced to follow the lines of the relations it seeks
+the child is an artist with an imperative vision committed to its most perfect realization what can the child do
+it needs some method some way of proceeding some technique
+child leaps onto bed between parents and pummels them with shrill words tiny fists limbs twist flail make demands hair pulled tangled gentle bruises taunts scratches endless demands
+somewhere scant suggestions of delicate structure remain
+as dreams slip away they try to smooth out and refashion ragged crumpled shapes
+lines so many so delicate once so finely drawn
+the best of what is left seems the pure white sheet under it all
+child’s barrage continues
+lines shredded by successive sprays of grapeshot
+and what slips like their dreams from its parents gathers form and shows through within and against its tender canonades tattered destroyed returned to the light of day under it all`</code></pre><div id="cell-7" class="observablehq observablehq--cell"><div><p>The following script in HyperTalk – <code>defFrAcros</code> for ‘define free acrostic’ – in fact allowed both strict and free ‘definitions’ to be created for words being transformed by the acrostic, depending on whether the string <code>"head"</code> (rather than anything else) was passed to the <code>acrosType</code> parameter of the function.</p>
+<pre><code>on defFrAcros acrosType
+  put item 1 of fld label into textName
+  put 1 into xword
+  put "abcdefghijklmnopqrstuvwxyz" into alpha
+  put word xword of field 1 into testw
+  set numberFormat to "0000"
+  put the number of words in fld text into totWords
+  lock screen
+  repeat with i = 1 to totWords
+    put word i of fld text into testw
+    put i into wordNo
+    if acrosType is "head" then
+      put 1 into defAllChars
+    else
+      put the length of testw into defAllChars
+    end if
+    repeat with c = 1 to defAllChars
+      put char c of testw into testc
+      if alpha contains testc then
+        push card
+        go cd textName &amp; ",def," &amp; testc
+        if the result is not empty then
+          go card "blank,def"
+          doMenu "New Card"
+          put textName &amp; ",def," &amp; testc into fld label
+          set the cantDelete of this cd to false
         end if
-        send transWord to cd
-        if interrupt then
-          exit repeat
-        end if
-        if showBase then
-          lock screen
-          hide cd fld baseFld
-          do "unlock screen with" && ve && veFactor
-        end if
-      end repeat
-      show cd fld baseFld of cd wherePlay
-    end playText
+        -- next condition would not have regard to frequencies
+        -- if testw is not in field defStuff then
+        put testw &amp; " " after field defStuff
+        put wordNo &amp; " " after field defNos
+        -- end if
+        pop card
+      end if
+    end repeat
+    put wordNo &amp; "/" &amp; totWords
+  end repeat
+  unlock screen
+end defFrAcros
+</code></pre>
+<p>This script works through all the words in the supply text. For each word, if <code>acrosType is "head"</code> it puts <code>1</code> – for the initial character of the word –&nbsp;into <code>defAllChars</code>, the number of characters in the word that will be processed; otherwise it processes all the characters in the word and <code>defAllChars</code> will contain the number of characters in the word. For each <code>defAllChars</code> of the word, the script checks to see if there exists a corresponding card – named for one of the twenty-six letters of the lowercase alphabet. If there isn’t such a card it creates one and adds an instance of the word to a field on the card; if there <em>is</em> such a card it simply adds a word instance to the field. This creates what could be otherwise represented by a JavaScript <code>Map</code> of word occurences indexed by letters of the alphabet. If the type of acrostic is head-acrostic, the <code>a</code> card, for example, will contain a list of all the word occurrences beginning with <code>a</code>; if not, it will contain a list of all word occurrences that contain a letter <code>a</code>.</p>
+</div></div><div id="cell-8" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-keyword">const</span> <span class="tok-definition">acrosticsMap</span> = (<span class="tok-definition">supplyText</span>, <span class="tok-definition">acrosticType</span>) =&gt; {
+  <span class="tok-keyword">let</span> <span class="tok-definition">acrostics</span> = <span class="tok-keyword">new</span> <span class="tok-definition">Map</span>(); <span class="tok-comment">// create a Map</span>
+  <span class="tok-keyword">let</span> <span class="tok-definition">words</span> = <span class="tok-variable">supplyText</span>.<span class="tok-definition">split</span>(<span class="tok-string">/\s/</span>); <span class="tok-comment">// split string literal supply text into words</span>
+  <span class="tok-keyword">for</span> (<span class="tok-keyword">let</span> <span class="tok-definition">i</span> = <span class="tok-literal">0</span>; <span class="tok-variable">i</span> &lt; <span class="tok-variable">words</span>.<span class="tok-definition">length</span>; <span class="tok-variable">i</span>++) {
+    <span class="tok-comment">// iterate through the words</span>
+    <span class="tok-comment">// get number of characters to process - only the first one for head-acrostic</span>
+    <span class="tok-keyword">let</span> <span class="tok-definition">charactersToProcess</span> = <span class="tok-string">"head"</span> === <span class="tok-variable">acrosticType</span> ? <span class="tok-literal">1</span> : <span class="tok-variable">words</span>[<span class="tok-variable">i</span>].<span class="tok-definition">length</span>;
+    <span class="tok-keyword">for</span> (<span class="tok-keyword">let</span> <span class="tok-definition">j</span> = <span class="tok-literal">0</span>; <span class="tok-variable">j</span> &lt; <span class="tok-variable">charactersToProcess</span>; <span class="tok-variable">j</span>++) {
+      <span class="tok-comment">// iterate through the characters</span>
+      <span class="tok-keyword">let</span> <span class="tok-definition">character</span> = <span class="tok-variable">words</span>[<span class="tok-variable">i</span>][<span class="tok-variable">j</span>]; <span class="tok-comment">// get the current character</span>
+      <span class="tok-keyword">if</span> (<span class="tok-variable">acrostics</span>.<span class="tok-definition">has</span>(<span class="tok-variable">character</span>)) {
+        <span class="tok-comment">// if we already have an entry for the character</span>
+        <span class="tok-variable">acrostics</span>.<span class="tok-definition">get</span>(<span class="tok-variable">character</span>).<span class="tok-definition">push</span>(<span class="tok-variable">words</span>[<span class="tok-variable">i</span>]); <span class="tok-comment">// add the word-occurrence to the array for the character</span>
+      } <span class="tok-keyword">else</span> {
+        <span class="tok-comment">// we don't yet have an entry for the character, so</span>
+        <span class="tok-variable">acrostics</span>.<span class="tok-definition">set</span>(<span class="tok-variable">character</span>, [<span class="tok-variable">words</span>[<span class="tok-variable">i</span>]]); <span class="tok-comment">// create an entry with an array containing the word-occurrence</span>
+      } <span class="tok-comment">// end of innner j loop</span>
+    }
+  }
+  <span class="tok-keyword">return</span> <span class="tok-variable">acrostics</span>;
+}</code></pre><div id="cell-9" class="observablehq observablehq--cell"><div><p>And then, we can evoke it in two forms, one for head-acrostics and one for a free-acrostic or mesostic:</p>
+</div></div><div id="cell-10" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-keyword">const</span> <span class="tok-definition">textTransMapHead</span> = <span class="tok-variable">acrosticsMap</span>(<span class="tok-variable">supplyTextString</span>, <span class="tok-string">"head"</span>);
+<span class="tok-variable">display</span>(<span class="tok-variable">textTransMapHead</span>);</code></pre><div id="cell-11" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-keyword">const</span> <span class="tok-definition">textTransMapFree</span> = <span class="tok-variable">acrosticsMap</span>(<span class="tok-variable">supplyTextString</span>);
+<span class="tok-variable">display</span>(<span class="tok-variable">acrosticsMap</span>(<span class="tok-variable">supplyTextString</span>));</code></pre><div id="cell-12" class="observablehq observablehq--cell"><div><p>Now we code a ‘player’ that performs the letteral hologogram stuctures implicit in both the head-acrostic and free or mesostic <code>Maps</code>. In the HyperCard version, after clicking the relevant item of the stack’s table of contents card, you were sent to a player card that was appropriate for your choice. A text was generated and displayed by a HyperTalk script. In the head-acrostic version, for each letter of the supply text, random words from the same text that begin with the letter are displayed in succession. In the mesostic version, random words that include each letter are displayed.</p>
+<p>First, a player function in Javascript that does the same thing.</p>
+</div></div><div id="cell-13" class="observablehq observablehq--cell"></div><pre data-language="ojs"><code class="language-ojs">acrosticPlayer = async (supplyText, supplyTextMap, displayId) =&gt; {
+  let words = supplyText.split(/\s/); // put the supply text's words into an array
+  let display = document.getElementById(displayId); // this is our display area
+  // get a reference to the element where the word currently generating the acrostic is displayed:
+  let displayMonitor = document.getElementById(displayId + "Mntr");
+  for (let i = 0; i &lt; words.length; i++) {
+    // this loops for the number of words in the supply text
+    // and then allows the function to return (as the original did)
+    let currentWord = words[i];
+    let screenWords = [];
+    let j; // we need j outside the loop, so declare it here
+    for (j = 0; j &lt; currentWord.length; j++) {
+      let character = currentWord[j];
+      // add word sastifying the acrostic rule to the screenWords that will be displayed:
+      if (supplyTextMap.has(character)) {
+        let possibleWords = supplyTextMap.get(character);
+        screenWords.push(possibleWords[randomInteger(possibleWords.length)]);
+      }
+    }
+    fadeInByWord([currentWord], displayMonitor, 800); // fade in the supply text word in lower register
+    fadeInByWord(screenWords, display, 800); // fade in the words of the acrostic, one by one
+    // time is needed to complete this animation
+    await delay(j * 800 + 800);
+    // gracefully fade out the acrostic words
+    display.style.color = "ivory";
+    displayMonitor.style.color = "ivory";
+    // time is needed for the color transition
+    await delay(3000);
+    // clear and reset the text color of the display area
+    display.innerHTML = "";
+    display.style.color = "black";
+    displayMonitor.innerHTML = "";
+    displayMonitor.style.color = "black";
+  }
+  return "The acrostic player has finished playing. Refresh page to restart.";
+}</code></pre><div id="cell-14" class="observablehq observablehq--cell"><div><p>Here is a display area for the <strong>head-acrostic</strong> version:</p>
+</div></div><div id="cell-15" class="observablehq observablehq--cell"></div><div id="cell-16" class="observablehq observablehq--cell"><div><p>And code that evokes the player for this display:</p>
+</div></div><div id="cell-17" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-variable">acrosticPlayer</span>(<span class="tok-variable">supplyTextString</span>, <span class="tok-variable">textTransMapHead</span>, <span class="tok-string">"uiaHead"</span>)</code></pre><div id="cell-18" class="observablehq observablehq--cell"><div><p>And here is another display for the <strong>mesostic</strong> version:</p>
+</div></div><div id="cell-19" class="observablehq observablehq--cell"></div><div id="cell-20" class="observablehq observablehq--cell"><div><p>With a corresponding invocation:</p>
+</div></div><div id="cell-21" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-variable">acrosticPlayer</span>(<span class="tok-variable">supplyTextString</span>, <span class="tok-variable">textTransMapFree</span>, <span class="tok-string">"uiaMesostic"</span>)</code></pre><div id="cell-22" class="observablehq observablehq--cell"><div><p>The <code>playText</code> HyperTalk script from the original stack is given below for comparison. Details of how the display was animated, however, will be found in the scripts attached to specific HyperCards where specific contents items were actually played. The <code>transWord</code> and <code>showWord</code> scripts of these cards did the work.</p>
+</div></div><div id="cell-23" class="observablehq observablehq--cell"><div><p>Lastly, in these notes, we will explore the implementation of what I then called ‘collocational constraints’ as applied to the mesostic form of ‘Under It All <small>II</small>.’ These constraints were implemented as a simple bigram Markov model, and such models will be discussed in more detail in <a href="inapm2_collocations_f">Collocations ƒ</a>. The reengineered implementation is placed here, to allow readers to compared the juxtapose versions: the generated text-to-be-read of the constrained version with that of the earlier unconstrained version (above). Also, in a further development that was introduced by <em>Moods &amp; Conjuctions</em>, those characters transformed in the mesostic form are highlighted in bold as the text is generated. The HyperTalk scripts that realized these later features are also quoted for comparison with earlier scripts, and with their JavaScript reengineering.</p>
+</div></div><div id="cell-24" class="observablehq observablehq--cell"><div><p>So, first, a new display area where we will animate ‘Under It All <small>II</small>’ as a <strong>mesostic with collocational constraints</strong>:</p>
+</div></div><div id="cell-25" class="observablehq observablehq--cell"></div><div id="cell-26" class="observablehq observablehq--cell"><div><p>We will need to make a <code>Map</code> of word occurrences in the supply text. These are explained in <a href="inapm2_collocations_f">Collocations ƒ</a> from which we will also <code>import</code> the function that constructs such a <code>Map</code>, invoking it immediately following the <code>import</code>.</p>
+</div></div><div id="cell-27" class="observablehq observablehq--cell"></div><div id="cell-28" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-keyword">const</span> <span class="tok-definition">uiaOccurrences</span> = <span class="tok-variable">occurrencesMap</span>(<span class="tok-variable">supplyTextString</span>)
+<span class="tok-variable">display</span>(<span class="tok-variable">uiaOccurrences</span>)</code></pre><div id="cell-29" class="observablehq observablehq--cell"><div><p>And we’ll need a new player function for this collocationally constrained version, one to which we can pass our <code>uiaOccurrences</code>:</p>
+</div></div><div id="cell-30" class="observablehq observablehq--cell"></div><pre data-language="ojs"><code class="language-ojs">acroCollocPlayer = async (
+  supplyText,
+  supplyTextMap,
+  occurrencesMap,
+  displayId
+) =&gt; {
+  let words = supplyText.split(/\s/); // put the supply texts words into an array
+  let display = document.getElementById(displayId); // this is our display area
+  // get a reference to the element where the word currently generating the acrostic is displayed:
+  let displayMonitor = document.getElementById(displayId + "Mntr");
+  let previousScreenWord = words[words.length - 1]; // initially put last word into previousScreenWord
+  for (let i = 0; i &lt; words.length; i++) {
+    // this loops for the number of words in the supply text
+    // and then allows the function to return (as the original did)
+    let currentWord = words[i];
+    let screenWords = [];
+    let j; // we need j outside the loop, so declare it here
+    for (j = 0; j &lt; currentWord.length; j++) {
+      let character = currentWord[j];
+      // we are going to try and find an acrostic-satisfying collocation
+      let foundColloc = false;
+      // add a word sastifying the acrostic rule to the display
+      if (supplyTextMap.has(character)) {
+        let possibleWords = supplyTextMap.get(character);
+        // if any of these possible words collocates with the previousWord
+        // then pick it, putting true into foundColloc
+        let currentScreenWord;
+        for (currentScreenWord of possibleWords) {
+          let occs;
+          try {
+            occs = occurrencesMap.get(currentScreenWord);
+          } catch (e) {
+            console.log("Word not found in occurrences Map."); // should not happen
+          }
+          // looping through the occurrences of current occ and previous prevOcc
+          for (const occ of occs) {
+            for (const prevOcc of occurrencesMap.get(previousScreenWord)) {
+              // if the occurrence numbers differ by 1, this is a collocation
+              if (occ - prevOcc == 1) {
+                foundColloc = true;
+                // console.log(
+                //   "found:",
+                //   `${previousScreenWord} ${currentScreenWord}`
+                // ); // DEBUG
+                break; // from prevOccs
+              }
+            }
+            if (foundColloc) break; // from occs
+          }
+          if (foundColloc) break; // from posibleWords
+        } // we've looped through possibleWords
+        // if no foundColloc pick a random acrostically qualifying word
+        if (!foundColloc)
+          currentScreenWord =
+            possibleWords[randomInteger(possibleWords.length)];
+        previousScreenWord = currentScreenWord;
+        // embolden the acrostic letter
+        let charOffset = currentScreenWord.indexOf(character);
+        currentScreenWord =
+          currentScreenWord.substring(0, charOffset) +
+          "&lt;b&gt;" +
+          character +
+          "&lt;/b&gt;" +
+          currentScreenWord.substring(charOffset + 1);
+        screenWords.push(currentScreenWord);
+      } // end characters loop
+    } // end words loop
+    fadeInByWord([currentWord], displayMonitor, 800);
+    fadeInByWord(screenWords, display, 800); // fade in the screenWords, one by one
+    // time is needed to complete this animation
+    await delay(j * 800 + 800);
+    // gracefully fade out the screen words
+    display.style.color = "ivory";
+    displayMonitor.style.color = "ivory";
+    // time is needed for the color transition
+    await delay(3000);
+    // clear and reset the text color of the display area
+    display.innerHTML = "";
+    display.style.color = "black";
+    displayMonitor.innerHTML = "";
+    displayMonitor.style.color = "black";
+  }
+  return "The acrostic player has finished playing. Refresh page to restart.";
+}</code></pre><div id="cell-31" class="observablehq observablehq--cell"><div><p>Finally, the animation is started by invoking this function on page refresh:</p>
+</div></div><div id="cell-32" class="observablehq observablehq--cell"></div><pre data-language="js"><code class="language-js"><span class="tok-keyword">const</span> <span class="tok-definition">playMesoColloc</span> = () =&gt;
+  <span class="tok-variable">acroCollocPlayer</span>(
+    <span class="tok-variable">supplyTextString</span>,
+    <span class="tok-variable">textTransMapFree</span>,
+    <span class="tok-variable">uiaOccurrences</span>,
+    <span class="tok-string">"uiaMesoColloc"</span>
+  )
+<span class="tok-variable">playMesoColloc</span>();</code></pre><div id="cell-33" class="observablehq observablehq--cell"><div><p><a id="n1" href="#p1">1.</a> placeholder note.</p>
+</div></div><div id="cell-34" class="observablehq observablehq--cell"><p><em>This cell is styling CSS for the display elements.</em></p>
+<style>
+  .display {
+    height: 30vw;
+    width: 45vw;
+    margin-left: 3vw;
+    font-size: 3vw;
+    background-color: ivory;
+    padding: 1vw;
+    overflow: hidden;
+    transition: color 2.5s ease-in-out;
+    -o-transition: color 2.5s ease-in-out;
+    -ms-transition: color 2.5s ease-in-out;
+    -moz-transition: color 2.5s ease-in-out;
+    -webkit-transition: color 2.5s ease-in-out;
+  }
+  .display b {
+    font-weight: 550;
+  }
+  .display.monitor {
+    height: 3vw;
+    font-size: 2.5vw;
+  }
+</style></div><pre data-language="html"><code class="language-html">&lt;<span class="tok-keyword">p</span>&gt;&lt;<span class="tok-keyword">em</span>&gt;This cell is styling CSS for the display elements.&lt;/<span class="tok-keyword">em</span>&gt;&lt;/<span class="tok-keyword">p</span>&gt;
+&lt;<span class="tok-keyword">style</span>&gt;
+  .display {
+    height: 30vw;
+    width: 45vw;
+    margin-left: 3vw;
+    font-size: 3vw;
+    background-color: ivory;
+    padding: 1vw;
+    overflow: hidden;
+    transition: color 2.5s ease-in-out;
+    -o-transition: color 2.5s ease-in-out;
+    -ms-transition: color 2.5s ease-in-out;
+    -moz-transition: color 2.5s ease-in-out;
+    -webkit-transition: color 2.5s ease-in-out;
+  }
+  .display b {
+    font-weight: 550;
+  }
+  .display.monitor {
+    height: 3vw;
+    font-size: 2.5vw;
+  }
+&lt;/<span class="tok-keyword">style</span>&gt;</code></pre><div id="cell-35" class="observablehq observablehq--cell"><div><hr>
+<h2 id="selected-raw-hyper-talk-scripts" tabindex="-1"><a href="#selected-raw-hyper-talk-scripts">Selected Raw HyperTalk Scripts</a></h2>
+<p>The original HyperCard stacks had, typically, five backgrounds:</p>
+<ul>
+<li><em>PrelimPlus</em> : Pages or screens readable in a conventional manner by book-like navigation.</li>
+<li><em>cardSet</em> : A number of cards shared this background with particular named cards used for one another readable animation.</li>
+<li><em>texts</em> : With versions of the supply text formatted for preprocessing.</li>
+<li><em>defs</em> : Basically used as a relatively simple data structure. Cards with this background were created and named dynamically during preprocessing, storing information about words in the texts.</li>
+</ul>
+</div></div><div id="cell-36" class="observablehq observablehq--cell"><div><h3 id="from-the-stack-script-of-indra-s-net" tabindex="-1"><a href="#from-the-stack-script-of-indra-s-net">from the Stack script of <em>Indra’s Net</em></a></h3>
+<pre><code>on playText
+  global ¬
+  textname,¬
+  wherePlay,¬
+  numOWords,¬
+  newWord, ¬
+  i, ¬
+  showBase, ¬
+  trans, ¬
+  playing, ¬
+  interrupt,veFactor,ve
+  put true into playing
+  set cursor to none
+  hide menuBar
+  put the number of words in fld text of cd textName &amp; ",text" ¬
+  into numOWords
+  put empty into cd fld baseFld of cd wherePlay
+  hide cd fld baseFld of cd wherePlay
+  put empty into cd fld playFld of cd wherePlay
+  go cd wherePlay
+  -- put 0 into i
+  put false into interrupt
+  repeat until i is numOWords
+    add 1 to i
+    if the mouse is down and the shiftKey is down then exit repeat
+    put word i of fld text of cd textName &amp; ",text" ¬
+    into newWord
+    if showBase then
+      put newWord into cd fld baseFld
+    end if
+    send transWord to cd
+    if interrupt then
+      exit repeat
+    end if
+    if showBase then
+      lock screen
+      hide cd fld baseFld
+      do "unlock screen with" &amp;&amp; ve &amp;&amp; veFactor
+    end if
+  end repeat
+  show cd fld baseFld of cd wherePlay
+end playText
 
-    on seekWord xWord
-      global ¬
-      textname,¬
-      wherePlay,¬
-      numOWords,¬
-      newWord, ¬
-      i, ¬
-      showBase, ¬
-      trans, ¬
-      playing, ¬
-      interrupt
-      put xWord into trans
-      put false into wordFound
-      repeat until wordFound
-        show cd fld baseFld
-        put word i of fld text of cd textName & ",text" into newWord
-        put newWord into cd fld baseFld
-        if newWord is trans then
-          put true into wordFound
-          subtract 1 from i
-        else
-          add 1 to i
-          if i > numOWords then put 1 into i
-        end if
-      end repeat
-      put false into interrupt
-      playText
-    end seekWord
-    ```
-  </script>
-  <script id="37" type="text/markdown">
-    ### from the script of the Card `acrostic1` in *Indra’s Net*
-    ```
-    on transWord
-      global ¬
-      textname,¬
-      wherePlay,¬
-      numOWords,¬
-      newWord, ¬
-      i, ¬
-      showBase, ¬
-      trans, ¬
-      interrupt,veFactor,sFactor,ve
-      put empty into cd fld playFld
-      put length(newWord) into wordLen
-      repeat with j = 1 to wordLen
-        -- taylored transformation routine goes here
-        put char j of newWord into newChar
-        if not (newChar < "a") or (newChar > "z") then
-          put textname & ",def," & newChar into defCard
-          put the number of words in fld defStuff of cd defCard ¬
-          into numODef
-          put trans into lastTrans
+on seekWord xWord
+  global ¬
+  textname,¬
+  wherePlay,¬
+  numOWords,¬
+  newWord, ¬
+  i, ¬
+  showBase, ¬
+  trans, ¬
+  playing, ¬
+  interrupt
+  put xWord into trans
+  put false into wordFound
+  repeat until wordFound
+    show cd fld baseFld
+    put word i of fld text of cd textName &amp; ",text" into newWord
+    put newWord into cd fld baseFld
+    if newWord is trans then
+      put true into wordFound
+      subtract 1 from i
+    else
+      add 1 to i
+      if i &gt; numOWords then put 1 into i
+    end if
+  end repeat
+  put false into interrupt
+  playText
+end seekWord
+</code></pre>
+</div></div><div id="cell-37" class="observablehq observablehq--cell"><div><h3 id="from-the-script-of-the-card-acrostic1-in-indra-s-net" tabindex="-1"><a href="#from-the-script-of-the-card-acrostic1-in-indra-s-net">from the script of the Card <code>acrostic1</code> in <em>Indra’s Net</em></a></h3>
+<pre><code>on transWord
+  global ¬
+  textname,¬
+  wherePlay,¬
+  numOWords,¬
+  newWord, ¬
+  i, ¬
+  showBase, ¬
+  trans, ¬
+  interrupt,veFactor,sFactor,ve
+  put empty into cd fld playFld
+  put length(newWord) into wordLen
+  repeat with j = 1 to wordLen
+    -- taylored transformation routine goes here
+    put char j of newWord into newChar
+    if not (newChar &lt; "a") or (newChar &gt; "z") then
+      put textname &amp; ",def," &amp; newChar into defCard
+      put the number of words in fld defStuff of cd defCard ¬
+      into numODef
+      put trans into lastTrans
+      put word random(numODef) of fld defStuff of cd defCard ¬
+      into trans
+      if (trans = lastTrans) and (numODef &gt; 2) then
+        repeat until trans &lt;&gt; lastTrans
           put word random(numODef) of fld defStuff of cd defCard ¬
           into trans
-          if (trans = lastTrans) and (numODef > 2) then
-            repeat until trans <> lastTrans
-              put word random(numODef) of fld defStuff of cd defCard ¬
-              into trans
-            end repeat
-          end if
-          -- now show the transformation
-          if the mouse is down then
-            put lastTrans into trans
-            put trans into cd fld baseFld
-            put true into interrupt
-            exit repeat
-          end if
-          showTrans
-          wait sFactor
-        end if
-      end repeat
-      if not interrupt then
-        if i = numOWords then wait 5 seconds else wait sFactor
-        lock screen
-        put empty into cd fld baseFld
-        put empty into cd fld playFld
-        do "unlock screen with" && ve && veFactor
+        end repeat
       end if
-    end transWord
+      -- now show the transformation
+      if the mouse is down then
+        put lastTrans into trans
+        put trans into cd fld baseFld
+        put true into interrupt
+        exit repeat
+      end if
+      showTrans
+      wait sFactor
+    end if
+  end repeat
+  if not interrupt then
+    if i = numOWords then wait 5 seconds else wait sFactor
+    lock screen
+    put empty into cd fld baseFld
+    put empty into cd fld playFld
+    do "unlock screen with" &amp;&amp; ve &amp;&amp; veFactor
+  end if
+end transWord
 
-    on showTrans
-      global showBase,trans,veFactor,ve
-      -- showing is also taylored for each playing card
-      lock screen
-      put trans & " " after cd fld playFld
-      if showBase then show cd fld baseFld
-      do "unlock screen with" && ve && veFactor
-    end showTrans
+on showTrans
+  global showBase,trans,veFactor,ve
+  -- showing is also taylored for each playing card
+  lock screen
+  put trans &amp; " " after cd fld playFld
+  if showBase then show cd fld baseFld
+  do "unlock screen with" &amp;&amp; ve &amp;&amp; veFactor
+end showTrans
 
-    ```
-    ### updated version of scripts from `acrostic1` in *Moods &amp; Conjunctions*
-    (as used in *Moods &amp; Conjunctions*)
-
-    ```
-    on transWord
-      global ¬
-      textname,¬
-      wherePlay,¬
-      numOWords,¬
-      newWord, ¬
-      i, ¬
-      showBase, ¬
-      trans, ¬
-      lastTrans, ¬
-      collocRef, ¬
-      lastCollocRef, ¬
-      interrupt, ¬
-      pickedColloc,veFactor,withColloc,defName,j,wordlen,sFactor,newChar,ve
-      put empty into cd fld playFld
-      put length(newWord) into wordLen
-      repeat with j = 1 to wordLen
-        -- taylored transformation routine goes here
-        put char j of newWord into newChar
-        if not (newChar < "a") or (newChar > "z") then
-          put defname & ",def," & newChar into defCard
-          if there is a cd defName & ",Occs," & lastTrans then
-            put (pickOcc(lastTrans)+1) into collocRef
-          else
-            put (collocRef+1) into collocRef
-          end if
-          put false into pickedColloc
-          put offset(collocRef,fld defNos of cd defCard) into collocOff
-          if (collocOff <> 0) and withColloc then
-            put true into pickedColloc
-            put (((collocOff-1) div 5) + 1) into collocPicked
-            put word collocPicked of fld defStuff of ¬
-            card defCard into trans
-            put word collocPicked of fld defNos of ¬
-            card defCard into collocRef
-          else
-            put the number of words in fld defStuff of cd defCard ¬
-            into numODef
-            put random(numODef) into randPicked
-            put word randPicked of fld defStuff of cd defCard ¬
+</code></pre>
+<h3 id="updated-version-of-scripts-from-acrostic1-in-moods-and-conjunctions" tabindex="-1"><a href="#updated-version-of-scripts-from-acrostic1-in-moods-and-conjunctions">updated version of scripts from <code>acrostic1</code> in <em>Moods &amp; Conjunctions</em></a></h3>
+<p>(as used in <em>Moods &amp; Conjunctions</em>)</p>
+<pre><code>on transWord
+  global ¬
+  textname,¬
+  wherePlay,¬
+  numOWords,¬
+  newWord, ¬
+  i, ¬
+  showBase, ¬
+  trans, ¬
+  lastTrans, ¬
+  collocRef, ¬
+  lastCollocRef, ¬
+  interrupt, ¬
+  pickedColloc,veFactor,withColloc,defName,j,wordlen,sFactor,newChar,ve
+  put empty into cd fld playFld
+  put length(newWord) into wordLen
+  repeat with j = 1 to wordLen
+    -- taylored transformation routine goes here
+    put char j of newWord into newChar
+    if not (newChar &lt; "a") or (newChar &gt; "z") then
+      put defname &amp; ",def," &amp; newChar into defCard
+      if there is a cd defName &amp; ",Occs," &amp; lastTrans then
+        put (pickOcc(lastTrans)+1) into collocRef
+      else
+        put (collocRef+1) into collocRef
+      end if
+      put false into pickedColloc
+      put offset(collocRef,fld defNos of cd defCard) into collocOff
+      if (collocOff &lt;&gt; 0) and withColloc then
+        put true into pickedColloc
+        put (((collocOff-1) div 5) + 1) into collocPicked
+        put word collocPicked of fld defStuff of ¬
+        card defCard into trans
+        put word collocPicked of fld defNos of ¬
+        card defCard into collocRef
+      else
+        put the number of words in fld defStuff of cd defCard ¬
+        into numODef
+        put random(numODef) into randPicked
+        put word randPicked of fld defStuff of cd defCard ¬
+        into trans
+        put word randPicked of fld defNos of cd defCard ¬
+        into collocRef
+        if (trans = lastTrans) and (numODef &gt; 2) then
+          repeat until trans &lt;&gt; lastTrans
+            put word random(numODef) of fld defStuff of cd defCard ¬
             into trans
-            put word randPicked of fld defNos of cd defCard ¬
-            into collocRef
-            if (trans = lastTrans) and (numODef > 2) then
-              repeat until trans <> lastTrans
-                put word random(numODef) of fld defStuff of cd defCard ¬
-                into trans
-              end repeat
-            end if -- there was or wasn't a valid collocation
-          end if
-          -- now show the transformation
-          if the mouse is down then
-            put lastTrans into trans
-            put trans into cd fld baseFld
-            put true into interrupt
-            exit repeat
-          end if
-          showTrans
-          wait sFactor
-          put trans into lastTrans
-          put collocRef into lastCollocRef
-        end if
-      end repeat
-      if not interrupt then
-        if i = numOWords then wait 5 seconds else wait 90
-        lock screen
-        put empty into cd fld baseFld
-        put empty into cd fld playFld
-        do" unlock screen with " & ve && veFactor
+          end repeat
+        end if -- there was or wasn't a valid collocation
       end if
-    end transWord
+      -- now show the transformation
+      if the mouse is down then
+        put lastTrans into trans
+        put trans into cd fld baseFld
+        put true into interrupt
+        exit repeat
+      end if
+      showTrans
+      wait sFactor
+      put trans into lastTrans
+      put collocRef into lastCollocRef
+    end if
+  end repeat
+  if not interrupt then
+    if i = numOWords then wait 5 seconds else wait 90
+    lock screen
+    put empty into cd fld baseFld
+    put empty into cd fld playFld
+    do" unlock screen with " &amp; ve &amp;&amp; veFactor
+  end if
+end transWord
 
-    on showTrans
-      global showBase,trans,pickedColloc,veFactor,j,wordlen,newChar,textName,ve
-      -- showing is also taylored for each playing card
-      lock screen
-      -- if pickedColloc then put "*" after cd fld playFld
-      put trans & " " after cd fld playFld
-      set the textStyle of char ¬
-      offset(newChar,the last word of cd fld playFld) ¬
-      of the last word of cd fld playFld to bold
-      if collocRef & "," is in fld endWords of cd textName & ",text" then
-        put return after cd fld playFld
-      end if
-      if showBase then show cd fld baseFld
-      do "unlock screen with " & ve && veFactor
-      if (j is wordlen) ¬
-      and ("," & trans & "," is in ¬
-      ",fallen,resolve,rooms,beneath,return,white,themselves,still,forms,pursue,techniques,demands,drawn,gales,lights,") ¬
-      then
-        push cd
-        lock screen
-        put empty into cd fld playFld
-        put empty into cd fld baseFld
-        do "go cd ill0" & random(4)
-        do "unlock screen with dissolve very slow"
-        wait 180
-        lock screen
-        pop cd
-        do "unlock screen with dissolve very slow"
-      end if
-    end showTrans
-    ```
-  </script>
-  <script id="38" type="application/vnd.observable.javascript" pinned="">
-    import { css, fadeInByWord, randomInteger } from "@shadoof/inapm0_shared"
-  </script>
-  <script id="39" type="application/vnd.observable.javascript">
-    delay = ms => new Promise(res => setTimeout(res, ms))
-  </script>
-  <script id="40" type="application/vnd.observable.javascript" pinned="">
-    _css = css
-  </script>
-</notebook>
+on showTrans
+  global showBase,trans,pickedColloc,veFactor,j,wordlen,newChar,textName,ve
+  -- showing is also taylored for each playing card
+  lock screen
+  -- if pickedColloc then put "*" after cd fld playFld
+  put trans &amp; " " after cd fld playFld
+  set the textStyle of char ¬
+  offset(newChar,the last word of cd fld playFld) ¬
+  of the last word of cd fld playFld to bold
+  if collocRef &amp; "," is in fld endWords of cd textName &amp; ",text" then
+    put return after cd fld playFld
+  end if
+  if showBase then show cd fld baseFld
+  do "unlock screen with " &amp; ve &amp;&amp; veFactor
+  if (j is wordlen) ¬
+  and ("," &amp; trans &amp; "," is in ¬
+  ",fallen,resolve,rooms,beneath,return,white,themselves,still,forms,pursue,techniques,demands,drawn,gales,lights,") ¬
+  then
+    push cd
+    lock screen
+    put empty into cd fld playFld
+    put empty into cd fld baseFld
+    do "go cd ill0" &amp; random(4)
+    do "unlock screen with dissolve very slow"
+    wait 180
+    lock screen
+    pop cd
+    do "unlock screen with dissolve very slow"
+  end if
+end showTrans
+</code></pre>
+</div></div><div id="cell-38" class="observablehq observablehq--cell"></div><pre data-language="ojs"><code class="language-ojs">import { css, fadeInByWord, randomInteger } from "@shadoof/inapm0_shared"</code></pre><div id="cell-39" class="observablehq observablehq--cell"></div><div id="cell-40" class="observablehq observablehq--cell"></div><pre data-language="ojs"><code class="language-ojs">_css = css</code></pre></main>
+  
+
+<style type="text/css">:root {
+  --syntax-link: var(--theme-foreground-focus);
+  --syntax-keyword: #e36209;
+  --syntax-atom: #032f62;
+  --syntax-literal: #6f42c1;
+  --syntax-string: #22863a;
+  --syntax-comment: var(--theme-foreground-muted);
+  --syntax-invalid: var(--theme-error);
+  --syntax-definition: #005cc5;
+  --syntax-variable: var(--theme-foreground-alt);
+  --syntax-meta: #d73a49;
+}
+
+:root {
+  --theme-background-b: color-mix(in srgb, var(--theme-foreground) 4%, var(--theme-background-a));
+  --theme-background: var(--theme-background-a);
+  --theme-background-alt: var(--theme-background-b);
+  --theme-foreground-alt: color-mix(in srgb, var(--theme-foreground) 90%, var(--theme-background-a));
+  --theme-foreground-muted: color-mix(in srgb, var(--theme-foreground) 60%, var(--theme-background-a));
+  --theme-foreground-faint: color-mix(in srgb, var(--theme-foreground) 50%, var(--theme-background-a));
+  --theme-foreground-fainter: color-mix(in srgb, var(--theme-foreground) 30%, var(--theme-background-a));
+  --theme-foreground-faintest: color-mix(in srgb, var(--theme-foreground) 14%, var(--theme-background-a));
+  --theme-error: #e7040f;
+  color-scheme: light;
+}
+
+:root {
+  --theme-foreground: #1b1e23;
+  --theme-foreground-focus: #3b5fc0;
+  --theme-background-a: #ffffff;
+}
+</style></body></html>
