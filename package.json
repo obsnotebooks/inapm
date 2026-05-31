@@ -2,11 +2,14 @@
   "dependencies": {
     "@observablehq/notebook-kit": "^1.5.0"
   },
-"scripts": {
+  "scripts": {
     "preview": "notebooks preview --root docs",
-  "build": "notebooks build --root docs --out dist -- docs/*.html",
+    "build": "notebooks build --root docs --out dist -- docs/*.html",
     "download": "notebooks download https://observablehq.com/@shadoof/inapm > docs/inapm.html",
     "publish:branch": "bash scripts/publish-dist.sh site-release root",
     "publish:branch:docs": "bash scripts/publish-dist.sh site-release docs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
   }
-  }
+}
