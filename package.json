@@ -4,7 +4,7 @@
   },
   "scripts": {
     "preview": "notebooks preview --root nbks",
-    "build": "notebooks build --root nbks --template nochrome.tmpl --out ../docs -- nbks/*.html",
+    "build": "notebooks build --root nbks --out ../docs -- nbks/*.html",
     "download": "notebooks download https://observablehq.com/@shadoof/inapm > nbks/inapm.html"
   },
   "devDependencies": {
