@@ -1,0 +1,192 @@
+<!doctype html>
+<notebook theme="air">
+  <title>Shared Components</title>
+  <script id="0" type="text/markdown">
+    # Shared Components
+  </script>
+  <script id="24" type="application/vnd.observable.javascript">
+    toc("h2, h3")
+  </script>
+  <script id="39" type="text/markdown">
+    ### Content Related
+  </script>
+  <script id="43" type="application/vnd.observable.javascript" pinned="">
+    // copy and pasted from @shadoof/nbs
+    function nbs(selector = "[data-nb]", heading = "<h3>Notes</h3>") {
+      return Generators.observe((notify) => {
+        let headings = [];
+
+        function observed() {
+          let nbNum = 0;
+          const h = Array.from(document.querySelectorAll(selector));
+          if (h.length !== headings.length || h.some((h, i) => headings[i] !== h)) {
+            notify(
+              html`${heading}<div>${Array.from((headings = h), (h) => {
+                h.innerHTML = `<a class=nb href=#_${h.dataset.nb}>[${++nbNum}]</a>`;
+                h.onclick = (e) => {
+                  e.preventDefault();
+                  hashLinkCheck(e.target.href);
+                };
+                let atag = Object.assign(html`<a href=#${h.id}>${nbNum}.</a>`, {
+                  onclick: (e) => (e.preventDefault(), h.scrollIntoView())
+                });
+                return html`<p class=nb id=_${h.dataset.nb}>${atag} ${
+                  document.getElementById(h.dataset.nb)
+                    ? document.getElementById(h.dataset.nb).innerHTML
+                    : ""
+                }</p>`;
+              })}`
+            );
+          }
+        }
+
+        // >>> This little hack ensures the new target divs actually exist when the
+        // generated html for a note reference is clicked, sending you to its note text.
+        // This is (currently) required on the Observable platform itself to ensure
+        // the back and forth links work for the note references and notes.
+        function hashLinkCheck(hashLink) {
+          let hashLinkChecks = 0;
+          const hashLinkChecker = setInterval((checksLimit = 2) => {
+            let div = document.getElementById(
+              hashLink.substring(hashLink.indexOf("#") + 1)
+            );
+            if (div) {
+              div.scrollIntoView();
+              clearInterval(hashLinkChecker);
+            }
+            if (++hashLinkChecks >= checksLimit && !div)
+              clearInterval(hashLinkChecker);
+            // console.log(hashLinkChecks); // DEBUG
+          }, 100);
+        }
+        // <<<
+
+        const observer = new MutationObserver(observed);
+        observer.observe(document.body, { childList: true, subtree: true });
+        observed();
+        return () => observer.disconnect();
+      });
+    }
+  </script>
+  <script id="34" type="text/markdown">
+    ### Visual Effects and Animations
+  </script>
+  <script id="5" type="application/vnd.observable.javascript" pinned="">
+    fadeInByWord = (wordsArray, displayElement, msPerWord) => {
+      function decodeHtml(html) {
+        let txt = document.getElementById("htmlDecoder");
+        if (!txt) {
+          txt = document.createElement("textarea");
+          txt.style.display = "none";
+          txt.id = "htmlDecoder";
+        }
+        txt.innerHTML = html;
+        return txt.value;
+      }
+
+      displayElement.innerHTML = wordsArray
+        .map((word) => '<span class="faded-word">' + decodeHtml(word) + "</span>")
+        .join(" ");
+      let wordsForFading = document.querySelectorAll(".faded-word");
+      wordsForFading.forEach((word) => {
+        word.addEventListener("transitionend", startNextWordAnimation);
+      });
+
+      function startNextWordAnimation(e) {
+        let nextWord = e.target.nextElementSibling;
+        if (nextWord) {
+          nextWord.classList.add("faded-activated");
+        }
+      }
+
+      startSequence(displayElement);
+
+      function startSequence(displayElement) {
+        if (!displayElement) {
+          return;
+        }
+        setTimeout(() => {
+          displayElement
+            .querySelector(".faded-word")
+            .classList.add("faded-activated");
+        }, msPerWord);
+      }
+    }
+  </script>
+  <script id="31" type="text/markdown">
+    ### General Utilities
+  </script>
+  <script id="9" type="application/vnd.observable.javascript" pinned="">
+    randomInteger = (maxPlusOne) => Math.floor(Math.random() * maxPlusOne)
+  </script>
+  <script id="53" type="text/markdown">
+    ### CSS
+  </script>
+  <script id="55" type="text/html" pinned="">
+    <p><em>This cell provides styling CSS that is shared by many inapm notebooks.</em></p>
+    <style>
+      code {
+        color: #015f86;
+      }
+
+      u {
+        text-decoration: none;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 1rem;
+      }
+
+      .supply {
+        font-style: italic;
+      }
+
+      .faded-word {
+    /*     display: inline-block; */
+        opacity: 0;
+      }
+
+      .faded-activated {
+        transition: opacity .7s ease-in-out;
+        opacity: 1;
+      }
+
+      .nb {
+        font-size: 85%;
+      }
+
+      #nbs {
+        display: none;
+      }
+    </style>
+  </script>
+  <script id="78" type="application/vnd.observable.javascript" pinned="">
+    // copied from @mbostock/toc
+    function toc(selector = "h1,h2,h3", heading = "<b>Table of Contents</b>") {
+      return Generators.observe((notify) => {
+        let headings = [];
+
+        function observed() {
+          const h = Array.from(document.querySelectorAll(selector));
+          if (h.length !== headings.length || h.some((h, i) => headings[i] !== h)) {
+            notify(
+              html`${heading}<ul>${Array.from((headings = h), (h) => {
+                return Object.assign(
+                  html`<li><a href=#${h.id}>${DOM.text(h.textContent)}`,
+                  { onclick: (e) => (e.preventDefault(), h.scrollIntoView()) }
+                );
+              })}`
+            );
+          }
+        }
+
+        const observer = new MutationObserver(observed);
+        observer.observe(document.body, { childList: true, subtree: true });
+        observed();
+        return () => observer.disconnect();
+      });
+    }
+  </script>
+  <script id="29" type="text/markdown">
+    <!-- ### Imports -->
+  </script>
+</notebook>

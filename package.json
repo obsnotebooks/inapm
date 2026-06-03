@@ -5,7 +5,7 @@
   "scripts": {
     "preview": "notebooks preview --root nbks",
     "build": "notebooks build --root nbks --out ../docs -- nbks/*.html",
-    "download": "notebooks download https://observablehq.com/@shadoof/inapm > nbks/inapm.html"
+    "download": "notebooks download https://observablehq.com/@shadoof/inapm0_shared > nbks/inapm0_shared.html"
   },
   "devDependencies": {
     "esbuild": "^0.28.0"
