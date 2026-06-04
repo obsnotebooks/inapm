@@ -8,7 +8,7 @@
   <script id="4" type="text/markdown">
     The work that ushered me into writing with computation was first characterized by some sense of the significant and affective possibilities that may arise from exposing and exploiting certain relationships between words and their constituent elements. When language is transcribed or otherwise represented graphically, in English, we call these constituent elements ‘letters’ and we take them to be language’s fundamental constituent elements: its *atoms*. This is, of course, a simplification. But it is one that has traction for anyone *literate* and it has been disproportionately reinforced, if not hypostatized by the still predominant Western, now Global, regime of computation.
 
-    Later, my work went on to experiment with translating from one spatial arrangement of letters to another. In the departure arrangement, the letters would be the constituents of one set of words; in the destination arrangement, letters from the same set or literal vocabulary would be moved or replaced to become the constituents of a different set of words. I characterized the processes that moved from one arrangement to another as ‘transliteral.’ The identities of the letters transcended the distinct arrangements and also any transitional arrangements in the shift from one readable state to another.
+    Later, my work went on to experiment with translating from one spatial arrangement of letters to another. In the departure arrangement, the letters would be the constituents of one set of words; in the destination arrangement, letters from the same set or literal vocabulary would be moved or replaced to become the constituents of a different set of words. I characterized the processes that moved from one arrangement to another as ‘transliteral.’ The identities of the letters transcended the distinct arrangements and also any transitional arrangements in the shift from one readable state to another.&nbsp;<span data-nb="testnote"></span>
   </script>
   <script id="5" type="text/markdown">
     But I studied Chinese, and the graphic representation of languages in the sinosphere does not make use of graphic linguistic ‘atoms’ that neatly correspond with the Roman letters to which most of the literate world has become accustomed. When working on a major project, _riverIsland_, bringing together Chinese poetics with a personal poetic project that shared these poetics at the level of short lyric descriptions of place, I began to think about processes that would be able to translate from one system of literal transcription to another. From Roman letters to Chinese characters.
@@ -99,34 +99,34 @@
 
     In the 1990s, I was already aware that what I now think of as the ‘regime of computation’ had been historically established overdetermined by Anglo-American material cultural formations. With respect to the localization and internationalization of computer systems (though much good work was underway), non-alphabetic scripts were, at the time, basically being ‘patched into’ operating systems that had a modularity (a kind of textual atomic structure) built on Roman fonts sets and, initially, on ASCII. In a critical art gesture, I wanted to point to this structural and ideological bias by visualizing disjunctures of transcription to which non-alphabetic cultures were subjected, unless they adapted to, created, and installed ‘extra resources,’ such as fonts that needed to be handled by nonstandard protocols and special software. I do not think that I did a good enough job of explaining this at the time and it is likely that any potential effects of the gesture were mostly lost.
   </script>
+  <script id="20" type="text/x-typescript" pinned="">
+    const notes = nbs();
+    display(notes)
+  </script>
   <script id="2" type="text/markdown">
     ---
     #### [ The Text from Programmatology: ]
     The atomic structure of written language and, I would argue, language-as-such differs in the two centers of ‘language and civilization.’ (I lean heavily and happily on Derrida in taking this view.) These differences are translated to digital media because linguistic structure itself — not simply linguistic ‘data’ — is transcribed by the entire historical process of digitization, taken to include the design of computing systems and data structures, not merely the actual transcription of cultural objects into bits and bytes. Basically, our programmatological systems reflect their derivation from an alphabetic system of linguistic inscription. Thus, I can easily use existing programming systems to manipulate western language in ways which correspond to encoded structures which are approximately ‘faithful’ to the language. It is easy to refer to letters as constituent of words, for instance. By contrast, it would be difficult, using existing systems in a straightforward way, to refer to the constituents of Chinese characters. Inevitably, in the first instance, while developing ideas and programs for text manipulation, I have taken advantage of the encoded structures of western language. I remain sharply aware that I am complicit with a privileged symbolic structure in doing so, recognizing that digitization could have been very different, commensurate with characters rather than letters. A recognition of this problematic underlies my most recent finished piece, <cite>riverIsland</cite>, which might otherwise be read as some sort of transcultural pastoral/lyric poetic exercise.
   </script>
+  <script id="19" type="text/markdown" pinned="">
+    #### Draft Notes Here:
+    <div id="nbs"> <!-- divs with this id have display:none in these inapm notebooks so the heading is displayed but the drafts are in this pinned code. -->
+
+      <div id="testnote"> Body of text note.</div>
+    </div>
+  </script>
   <script id="11" type="text/markdown">
     ---
     #### Imports etc.
   </script>
-  <script id="15" type="module" pinned="">
-    const sharedHtml = await fetch("inapm0_shared.html").then(r => r.text())
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(sharedHtml, "text/html")
-    const scripts = doc.querySelectorAll("script")
-
-    // css is the text/html block (id=55)
-    const cssScript = [...scripts].find(s => s.type === "text/html" && s.textContent.includes("faded-word"))
-    const cssEl = document.createElement("div")
-    cssEl.innerHTML = cssScript.textContent.trim()
-    document.body.appendChild(cssEl)
-    const css = cssEl
-
-    // nbs is the text/javascript block (id=43)
-    const nbsScript = [...scripts].find(s => s.type === "application/vnd.observable.javascript" && s.textContent.includes("function nbs"))
-    const nbsFn = new Function("Generators", "html", "MutationObserver", `${nbsScript.textContent.trim()}; return nbs;`)
-    const nbs = nbsFn(Generators, html, MutationObserver)
-
-    display("✅ css and nbs loaded from local file")
+  <script id="16" type="application/vnd.observable.javascript" pinned="">
+    import { css } from "@shadoof/inapm0_shared"
+  </script>
+  <script id="22" type="text/x-typescript" pinned="">
+    const { nbs } = await import(await FileAttachment("resources/js/editorial.js").url());
+  </script>
+  <script id="17" type="text/x-typescript" pinned="">
+    display(css)
   </script>
   <script id="12" type="text/markdown" pinned="">
     ````
@@ -139,5 +139,66 @@
     const nbs = await sharedModule.value("nbs")
     display(css)
     ````
+  </script>
+  <script id="23" type="text/x-typescript" pinned="">
+    const newEditorialSrc = `function nbs(selector = "[data-nb]", heading = "<h3>Notes</h3>") {
+      const container = document.createElement("div");
+      let headings = [];
+
+      function hashLinkCheck(hashLink) {
+        let hashLinkChecks = 0;
+        const hashLinkChecker = setInterval((checksLimit = 2) => {
+          let div = document.getElementById(
+            hashLink.substring(hashLink.indexOf("#") + 1)
+          );
+          if (div) {
+            div.scrollIntoView();
+            clearInterval(hashLinkChecker);
+          }
+          if (++hashLinkChecks >= checksLimit && !div)
+            clearInterval(hashLinkChecker);
+        }, 100);
+      }
+
+      function observed() {
+        let nbNum = 0;
+        const h = Array.from(document.querySelectorAll(selector));
+        if (h.length !== headings.length || h.some((h, i) => headings[i] !== h)) {
+          headings = h;
+          container.innerHTML = heading;
+          const inner = document.createElement("div");
+          headings.forEach((h) => {
+            h.innerHTML = \`<a class=nb href=#_\${h.dataset.nb}>[\${++nbNum}]</a>\`;
+            h.onclick = (e) => {
+              e.preventDefault();
+              hashLinkCheck(e.target.href);
+            };
+            const p = document.createElement("p");
+            p.className = "nb";
+            p.id = \`_\${h.dataset.nb}\`;
+            const atag = document.createElement("a");
+            atag.href = \`#\${h.id}\`;
+            atag.textContent = \`\${nbNum}.\`;
+            atag.onclick = (e) => { e.preventDefault(); h.scrollIntoView(); };
+            const noteEl = document.getElementById(h.dataset.nb);
+            p.appendChild(atag);
+            p.append(" " + (noteEl ? noteEl.innerHTML : ""));
+            inner.appendChild(p);
+          });
+          container.appendChild(inner);
+        }
+      }
+
+      const observer = new MutationObserver(observed);
+      observer.observe(document.body, { childList: true, subtree: true });
+      observed();
+      return container;
+    }
+    export { nbs };
+    `;
+
+    const blob = new Blob([newEditorialSrc], { type: "text/javascript" });
+    display("New editorial.js content ready — " + blob.size + " bytes");
+    display(newEditorialSrc);
   </script>
 </notebook>
