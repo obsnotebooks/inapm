@@ -3,8 +3,8 @@
     "@observablehq/notebook-kit": "^1.5.0"
   },
   "scripts": {
-    "preview": "notebooks preview --root nbks",
-    "build": "notebooks build --root nbks --out ../docs -- nbks/*.html",
+    "preview": "notebooks preview --root nbks --template resources/custom.tmpl",
+    "build": "notebooks build --root nbks --out ../dist --template resources/custom.tmpl -- nbks/*.html",
     "download": "notebooks download https://observablehq.com/@shadoof/inapm0_shared > nbks/inapm0_shared.html"
   },
   "devDependencies": {
