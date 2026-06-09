@@ -8,7 +8,7 @@
   <script id="4" type="text/markdown">
     The work that ushered me into writing with computation was first characterized by some sense of the significant and affective possibilities that may arise from exposing and exploiting certain relationships between words and their constituent elements. When language is transcribed or otherwise represented graphically, in English, we call these constituent elements ‘letters’ and we take them to be language’s fundamental constituent elements: its *atoms*. This is, of course, a simplification. But it is one that has traction for anyone *literate* and it has been disproportionately reinforced, if not hypostatized by the still predominant Western, now Global, regime of computation.
 
-    Later, my work went on to experiment with translating from one spatial arrangement of letters to another. In the departure arrangement, the letters would be the constituents of one set of words; in the destination arrangement, letters from the same set or literal vocabulary would be moved or replaced to become the constituents of a different set of words. I characterized the processes that moved from one arrangement to another as ‘transliteral.’ The identities of the letters transcended the distinct arrangements and also any transitional arrangements in the shift from one readable state to another.&nbsp;<span data-nb="testnote"></span>
+    Later, my work went on to experiment with translating from one spatial arrangement of letters to another. In the departure arrangement, the letters would be the constituents of one set of words; in the destination arrangement, letters from the same set or literal vocabulary would be moved or replaced to become the constituents of a different set of words. I characterized the processes that moved from one arrangement to another as ‘transliteral.’ The identities of the letters transcended the distinct arrangements and also any transitional arrangements in the shift from one readable state to another.
   </script>
   <script id="5" type="text/markdown">
     But I studied Chinese, and the graphic representation of languages in the sinosphere does not make use of graphic linguistic ‘atoms’ that neatly correspond with the Roman letters to which most of the literate world has become accustomed. When working on a major project, _riverIsland_, bringing together Chinese poetics with a personal poetic project that shared these poetics at the level of short lyric descriptions of place, I began to think about processes that would be able to translate from one system of literal transcription to another. From Roman letters to Chinese characters.
@@ -97,7 +97,11 @@
 
     The no-font glyphs and Square Words keyframes require a little extra commentary.
 
-    In the 1990s, I was already aware that what I now think of as the ‘regime of computation’ had been historically established overdetermined by Anglo-American material cultural formations. With respect to the localization and internationalization of computer systems (though much good work was underway), non-alphabetic scripts were, at the time, basically being ‘patched into’ operating systems that had a modularity (a kind of textual atomic structure) built on Roman fonts sets and, initially, on ASCII. In a critical art gesture, I wanted to point to this structural and ideological bias by visualizing disjunctures of transcription to which non-alphabetic cultures were subjected, unless they adapted to, created, and installed ‘extra resources,’ such as fonts that needed to be handled by nonstandard protocols and special software. I do not think that I did a good enough job of explaining this at the time and it is likely that any potential effects of the gesture were mostly lost.
+    In the 1990s, I was already aware that what I now think of as the ‘regime of computation’ had been historically established and overdetermined by Anglo-American material cultural formations. With respect to the localization and internationalization of computer systems (though much good work was underway), non-alphabetic scripts were, at the time, basically being ‘patched into’ operating systems that had a modularity (a kind of textual atomic structure) built on Roman fonts sets and, initially, on ASCII. In a critical art gesture, I wanted to point to this structural and ideological bias by visualizing disjunctures of transcription to which non-alphabetic cultures were subjected, unless they adapted to, created, and installed ‘extra resources,’ such as fonts that needed to be handled by nonstandard protocols and special software. I do not think that I did a good enough job of explaining this at the time and it is likely that any potential effects of the gesture were mostly lost.
+
+    The no-font glyphs show the two glyphs which used to display on Apple Mac computers when a text that had been produced on a system set up to edit Chinese traditional characters was moved to one on which the Chinese font was either not installed or not working. Specifically, of course, these glyphs are those substituted when attempting to display 空 *empty*, romanized *kong*. Moving forward, for any project that explores interliteral interpolation, I would not include this critical art keyframe.
+
+    The Square Words keyframes are another matter. These are derived, with the artist’s permission, from a major multimodal art work by the aclaimed practitioner, Xu Bing (徐冰 1955- ). Although it has produced many outcomes and installation, <cite>Square Word Calligraphy</cite> is basically a system for composing legible Roman letters into rectangular arrangments that resemble Chinese character. To do this, Xu Bing initially designed an alphabet drawn with Chinese calligraphic strokes and then applied rules for their composition into ‘Square Words’ that more or less conform to the rules for assembling the elements of traditional characters.&nbsp;<span data-nb="sqwords"></span>
   </script>
   <script id="20" type="text/x-typescript" pinned="">
     const notes = nbs();
@@ -111,8 +115,7 @@
   <script id="19" type="text/markdown" pinned="">
     #### Draft Notes Here:
     <div id="nbs"> <!-- divs with this id have display:none in these inapm notebooks so the heading is displayed but the drafts are in this pinned code. -->
-
-      <div id="testnote"> Body of text note.</div>
+      <div id="sqwords">See <a href="inapm1_bibliography#XU_SW1">Xu Bing (1996)</a>.</div>
     </div>
   </script>
   <script id="11" type="text/markdown">
@@ -127,78 +130,5 @@
   </script>
   <script id="17" type="text/x-typescript" pinned="">
     display(css)
-  </script>
-  <script id="12" type="text/markdown" pinned="">
-    ````
-    import define from "https://api.observablehq.com/@shadoof/inapm0_shared.js?v=4"
-    import {Runtime, Library} from "npm:@observablehq/runtime@5"
-
-    const sharedRuntime = new Runtime(new Library())
-    const sharedModule = sharedRuntime.module(define)
-    const css = await sharedModule.value("css")
-    const nbs = await sharedModule.value("nbs")
-    display(css)
-    ````
-  </script>
-  <script id="23" type="text/x-typescript" pinned="">
-    const newEditorialSrc = `function nbs(selector = "[data-nb]", heading = "<h3>Notes</h3>") {
-      const container = document.createElement("div");
-      let headings = [];
-
-      function hashLinkCheck(hashLink) {
-        let hashLinkChecks = 0;
-        const hashLinkChecker = setInterval((checksLimit = 2) => {
-          let div = document.getElementById(
-            hashLink.substring(hashLink.indexOf("#") + 1)
-          );
-          if (div) {
-            div.scrollIntoView();
-            clearInterval(hashLinkChecker);
-          }
-          if (++hashLinkChecks >= checksLimit && !div)
-            clearInterval(hashLinkChecker);
-        }, 100);
-      }
-
-      function observed() {
-        let nbNum = 0;
-        const h = Array.from(document.querySelectorAll(selector));
-        if (h.length !== headings.length || h.some((h, i) => headings[i] !== h)) {
-          headings = h;
-          container.innerHTML = heading;
-          const inner = document.createElement("div");
-          headings.forEach((h) => {
-            h.innerHTML = \`<a class=nb href=#_\${h.dataset.nb}>[\${++nbNum}]</a>\`;
-            h.onclick = (e) => {
-              e.preventDefault();
-              hashLinkCheck(e.target.href);
-            };
-            const p = document.createElement("p");
-            p.className = "nb";
-            p.id = \`_\${h.dataset.nb}\`;
-            const atag = document.createElement("a");
-            atag.href = \`#\${h.id}\`;
-            atag.textContent = \`\${nbNum}.\`;
-            atag.onclick = (e) => { e.preventDefault(); h.scrollIntoView(); };
-            const noteEl = document.getElementById(h.dataset.nb);
-            p.appendChild(atag);
-            p.append(" " + (noteEl ? noteEl.innerHTML : ""));
-            inner.appendChild(p);
-          });
-          container.appendChild(inner);
-        }
-      }
-
-      const observer = new MutationObserver(observed);
-      observer.observe(document.body, { childList: true, subtree: true });
-      observed();
-      return container;
-    }
-    export { nbs };
-    `;
-
-    const blob = new Blob([newEditorialSrc], { type: "text/javascript" });
-    display("New editorial.js content ready — " + blob.size + " bytes");
-    display(newEditorialSrc);
   </script>
 </notebook>
